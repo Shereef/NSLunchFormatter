@@ -1,0 +1,26 @@
+{
+  "name": "ns-lunch-formatter",
+  "version": "1.0.0",
+  "description": "This project helps schools convert CSV reports with student names and meals into a consolidated list by meals and classes. The tool can export the consolidated data to PDF format.",
+  "main": "index.html",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/Shereef/NSLunchFormatter.git"
+  },
+  "author": "Shereef Marzouk",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Shereef/NSLunchFormatter/issues"
+  },
+  "homepage": "https://github.com/Shereef/NSLunchFormatter#readme",
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0"
+  },
+  "jest": {
+    "testEnvironment": "jsdom"
+  }
+}

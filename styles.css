@@ -1,0 +1,149 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+    min-width: 256px;
+}
+
+.container {
+    max-width: 800px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    min-width: 256px;
+}
+
+h1 {
+    text-align: center;
+    color: #333;
+}
+
+.instructions {
+    margin-bottom: 20px;
+}
+
+.instructions p {
+    margin: 10px 0;
+}
+
+.file-input {
+    margin: 20px 0;
+}
+
+.file-input input {
+    display: none;
+}
+
+.file-input label {
+    display: block;
+    padding: 10px;
+    background-color: #007bff;
+    color: #fff;
+    text-align: center;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.file-input label:hover {
+    background-color: #0056b3;
+}
+
+.file-input label.chosen {
+    background-color: #28a745;
+}
+
+.file-input label.chosen:hover {
+    background-color: #218838;
+}
+
+.btn {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    background-color: #28a745;
+    color: #fff;
+    text-align: center;
+    border-radius: 4px;
+    cursor: pointer;
+    text-decoration: none;
+    box-sizing: border-box;
+}
+
+.btn:hover {
+    background-color: #218838;
+}
+
+.advancedOption {
+    margin-top: 20px;
+    display: none;
+    margin-bottom: 0;
+}
+
+.advancedOption textarea {
+    width: 100%;
+    height: 200px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+.advancedOption h3 {
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.checkbox-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.checkbox-container input {
+    margin-right: 20px;
+}
+
+.advancedOption span {
+    display: block;
+    margin-top: 10px;
+    color: #666;
+    font-size: 14px;
+}
+
+.advancedOptionInlineBlock {
+    display: none;
+    margin-top: 10px;
+    color: #666;
+    font-size: 14px;
+}
+
+footer {
+    text-align: center;
+    margin-top: 20px;
+}
+
+@media (max-width: 768px) {
+    .container {
+        margin: 20px;
+        padding: 10px;
+        min-width: 256px;
+    }
+
+    .file-input label, .btn {
+        font-size: 14px;
+        padding: 8px;
+    }
+
+    .advancedOption, .advancedOptionInlineBlock, .checkbox-container, p:not(.instructions p, footer p) {
+        display: none;
+    }
+
+    footer p {
+        display: block;
+    }
+}
