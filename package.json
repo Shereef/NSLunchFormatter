@@ -54,5 +54,14 @@
         "*.json": [
             "prettier"
         ]
-    }
+    },
+    "eslintIgnore": [
+        "coverage/"
+    ],
+    "prettierIgnore": [
+        "coverage/"
+    ],
+    "stylelintIgnore": [
+        "coverage/"
+    ]
 }

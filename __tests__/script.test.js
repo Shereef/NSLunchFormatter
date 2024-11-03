@@ -395,6 +395,8 @@ describe('DOMContentLoaded', () => {
 
         document.dispatchEvent(new Event('DOMContentLoaded'));
 
-        expect(alertMock).toHaveBeenCalledWith('jsPDF library is not loaded. Please include it in your HTML.');
+        expect(alertMock).toHaveBeenCalledWith(
+            'jsPDF library is not loaded. Please include it in your HTML.'
+        );
     });
 });
