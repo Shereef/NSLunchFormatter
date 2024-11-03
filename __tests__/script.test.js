@@ -17,6 +17,7 @@ beforeAll(() => {
             if (id === 'processBtn' || id === 'csvFile') {
                 return {
                     addEventListener: jest.fn(),
+                    dispatchEvent: jest.fn(),
                     files: [],
                     value: ''
                 };
@@ -51,6 +52,29 @@ beforeAll(() => {
 
     // Mock window.alert
     global.alert = jest.fn();
+
+    // Mock window.jspdf
+    global.window.jspdf = {
+        jsPDF: jest.fn().mockImplementation(() => ({
+            text: jest.fn(),
+            setFontSize: jest.fn(),
+            setTextColor: jest.fn(),
+            addPage: jest.fn(),
+            save: jest.fn(),
+            getTextWidth: jest.fn().mockReturnValue(50),
+            setPage: jest.fn(),
+            internal: {
+                pageSize: {
+                    getWidth: jest.fn().mockReturnValue(210),
+                    getHeight: jest.fn().mockReturnValue(297)
+                }
+            }
+        }))
+    };
+});
+
+afterEach(() => {
+    jest.resetAllMocks();
 });
 
 describe('csvToArray', () => {
@@ -360,5 +384,17 @@ describe('addFooter', () => {
             80,
             280
         );
+    });
+});
+
+describe('DOMContentLoaded', () => {
+    test('should show alert if jsPDF is not loaded', () => {
+        global.window.jspdf = undefined;
+        const alertMock = jest.fn();
+        global.alert = alertMock;
+
+        document.dispatchEvent(new Event('DOMContentLoaded'));
+
+        expect(alertMock).toHaveBeenCalledWith('jsPDF library is not loaded. Please include it in your HTML.');
     });
 });
