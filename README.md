@@ -4,16 +4,16 @@ This project helps schools convert CSV reports with student names and meals into
 
 ## Features
 
-- Convert CSV reports to a consolidated list by meals and classes.
-- Export the consolidated data to PDF format.
-- User-friendly interface with advanced options for customization.
+-   Convert CSV reports to a consolidated list by meals and classes.
+-   Export the consolidated data to PDF format.
+-   User-friendly interface with advanced options for customization.
 
 ## Getting Started
 
 ### Prerequisites
 
-- A modern web browser (Chrome, Firefox, Edge, etc.)
-- Internet connection to load external libraries (XLSX and jsPDF)
+-   A modern web browser (Chrome, Firefox, Edge, etc.)
+-   Internet connection to load external libraries (XLSX and jsPDF)
 
 ### Purpose
 

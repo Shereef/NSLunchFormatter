@@ -11,7 +11,7 @@ body {
     margin: 50px auto;
     padding: 20px;
     background-color: #fff;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 0 10px rgb(0 0 0 / 10%);
     border-radius: 8px;
     min-width: 256px;
 }
@@ -23,10 +23,6 @@ h1 {
 
 .instructions {
     margin-bottom: 20px;
-}
-
-.instructions p {
-    margin: 10px 0;
 }
 
 .file-input {
@@ -76,13 +72,13 @@ h1 {
     background-color: #218838;
 }
 
-.advancedOption {
+.advanced-option {
     margin-top: 20px;
     display: none;
     margin-bottom: 0;
 }
 
-.advancedOption textarea {
+.advanced-option textarea {
     width: 100%;
     height: 200px;
     padding: 10px;
@@ -93,7 +89,7 @@ h1 {
     box-sizing: border-box;
 }
 
-.advancedOption h3 {
+.advanced-option h3 {
     margin-bottom: 10px;
     color: #333;
 }
@@ -108,14 +104,14 @@ h1 {
     margin-right: 20px;
 }
 
-.advancedOption span {
+.advanced-option span {
     display: block;
     margin-top: 10px;
     color: #666;
     font-size: 14px;
 }
 
-.advancedOptionInlineBlock {
+.advanced-option-inline-block {
     display: none;
     margin-top: 10px;
     color: #666;
@@ -127,23 +123,31 @@ footer {
     margin-top: 20px;
 }
 
-@media (max-width: 768px) {
+footer p {
+    display: block;
+}
+
+.instructions p {
+    margin: 10px 0;
+}
+
+@media (width <= 768px) {
     .container {
         margin: 20px;
         padding: 10px;
         min-width: 256px;
     }
 
-    .file-input label, .btn {
+    .file-input label,
+    .btn {
         font-size: 14px;
         padding: 8px;
     }
 
-    .advancedOption, .advancedOptionInlineBlock, .checkbox-container, p:not(.instructions p, footer p) {
+    .advanced-option,
+    .advanced-option-inline-block,
+    .checkbox-container,
+    p:not(footer p, .instructions p) {
         display: none;
-    }
-
-    footer p {
-        display: block;
     }
 }

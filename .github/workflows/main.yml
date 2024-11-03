@@ -1,25 +1,46 @@
 name: CI/CD
 
 on:
-  push:
-    branches:
-      - main
+    push:
+        branches:
+            - main
 
 jobs:
-  test:
-    runs-on: ubuntu-latest
+    test:
+        runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v3
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '22'
+            - name: Set up Node.js
+              uses: actions/setup-node@v3
+              with:
+                  node-version: '22'
 
-      - name: Install dependencies
-        run: npm install
+            - name: Install dependencies
+              run: npm install
 
-      - name: Run tests
-        run: npm test
+            - name: Run ESLint
+              run: npm run lint
+
+            - name: Run Prettier check
+              run: npm run prettier:check
+
+            - name: Run Stylelint
+              run: npx stylelint "**/*.css"
+
+            - name: Run tests
+              run: npm test
+
+            - name: SonarCloud Scan
+              uses: SonarSource/sonarcloud-github-action@v3
+              env:
+                  SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+              with:
+                  projectBaseDir: .
+                  args: >
+                      -Dsonar.projectKey=Shereef_NSLunchFormatter
+                      -Dsonar.organization=shereef
+                      -Dsonar.host.url=https://sonarcloud.io
+                      -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info

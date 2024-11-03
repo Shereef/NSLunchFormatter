@@ -8,8 +8,10 @@
         "Coughlin",
         "Ebbett",
         "Isenor",
-        "LeVasseur",
         "LaVasseur",
-        "MacFarlane"
+        "LeVasseur",
+        "linebreak",
+        "MacFarlane",
+        "stylelint"
     ]
 }
