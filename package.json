@@ -1,26 +1,58 @@
 {
-  "name": "ns-lunch-formatter",
-  "version": "1.0.0",
-  "description": "This project helps schools convert CSV reports with student names and meals into a consolidated list by meals and classes. The tool can export the consolidated data to PDF format.",
-  "main": "index.html",
-  "scripts": {
-    "test": "jest"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+ssh://git@github.com/Shereef/NSLunchFormatter.git"
-  },
-  "author": "Shereef Marzouk",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/Shereef/NSLunchFormatter/issues"
-  },
-  "homepage": "https://github.com/Shereef/NSLunchFormatter#readme",
-  "devDependencies": {
-    "jest": "^29.7.0",
-    "jest-environment-jsdom": "^29.7.0"
-  },
-  "jest": {
-    "testEnvironment": "jsdom"
-  }
+    "name": "ns-lunch-formatter",
+    "version": "1.0.0",
+    "description": "This project helps schools convert CSV reports with student names and meals into a consolidated list by meals and classes. The tool can export the consolidated data to PDF format.",
+    "main": "index.html",
+    "scripts": {
+        "test": "jest",
+        "lint": "eslint .",
+        "lint:check": "eslint .",
+        "format": "prettier --write .",
+        "lint:fix": "eslint --fix .",
+        "prepare": "husky",
+        "prettier:check": "prettier --check .",
+        "format:check": "prettier --check .",
+        "stylelint:fix": "stylelint '**/*.css' --fix",
+        "stylelint": "stylelint '**/*.css'",
+        "stylelint:check": "stylelint '**/*.css'"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+ssh://git@github.com/Shereef/NSLunchFormatter.git"
+    },
+    "author": "Shereef Marzouk",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/Shereef/NSLunchFormatter/issues"
+    },
+    "homepage": "https://github.com/Shereef/NSLunchFormatter#readme",
+    "type": "module",
+    "devDependencies": {
+        "eslint": "^9.14.0",
+        "eslint-config-prettier": "^9.1.0",
+        "eslint-plugin-prettier": "^5.2.1",
+        "husky": "^9.1.6",
+        "jest": "^29.7.0",
+        "jest-environment-jsdom": "^29.7.0",
+        "lint-staged": "^15.2.10",
+        "prettier": "^3.3.3",
+        "stylelint": "^16.10.0",
+        "stylelint-config-standard": "^36.0.1"
+    },
+    "jest": {
+        "testEnvironment": "jsdom"
+    },
+    "lint-staged": {
+        "*.js": [
+            "eslint",
+            "prettier"
+        ],
+        "*.css": [
+            "stylelint",
+            "prettier"
+        ],
+        "*.json": [
+            "prettier"
+        ]
+    }
 }

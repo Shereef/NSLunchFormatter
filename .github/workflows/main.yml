@@ -1,25 +1,56 @@
 name: CI/CD
 
 on:
-  push:
-    branches:
-      - main
+    push:
+        branches:
+            - main
 
 jobs:
-  test:
-    runs-on: ubuntu-latest
+    test:
+        runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v3
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '22'
+            - name: Set up Node.js
+              uses: actions/setup-node@v3
+              with:
+                  node-version: '22'
 
-      - name: Install dependencies
-        run: npm install
+            - name: Install dependencies
+              run: npm install
 
-      - name: Run tests
-        run: npm test
+            - name: Run ESLint
+              run: npm run lint
+
+            - name: Run Prettier check
+              run: npm run prettier:check
+
+            - name: Run Stylelint
+              run: npx stylelint "**/*.css"
+
+            - name: Run tests
+              run: npm test
+
+            - name: Set up Java
+              uses: actions/setup-java@v3
+              with:
+                  distribution: 'temurin'
+                  java-version: '21'
+
+            - name: Set JAVA_HOME
+              run: echo "JAVA_HOME=/opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/21/x64" >> $GITHUB_ENV
+
+            - name: SonarCloud Scan
+              uses: SonarSource/sonarcloud-github-action@v1
+              env:
+                  SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+                  JAVA_HOME: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/21/x64
+                  PATH: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/21/x64/bin:${{ env.PATH }}
+              with:
+                  projectBaseDir: .
+                  args: >
+                      -Dsonar.projectKey=Shereef_NSLunchFormatter
+                      -Dsonar.organization=Shereef
+                      -Dsonar.host.url=https://sonarcloud.io

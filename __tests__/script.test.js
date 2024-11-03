@@ -1,4 +1,9 @@
-const { csvToArray, convertHomeRoomDataToDict, transformUserInputData } = require('../script');
+/* eslint-env jest */
+const {
+    csvToArray,
+    convertHomeRoomDataToDict,
+    transformUserInputData
+} = require('../script');
 
 beforeAll(() => {
     // Mock the document object
@@ -67,31 +72,43 @@ describe('transformUserInputData', () => {
         const expectedData = {
             '2024-01-01': {
                 totalMeals: 3,
-                mealCounts: { 'Pizza': 1, 'Burger': 2 },
+                mealCounts: { Pizza: 1, Burger: 2 },
                 classes: [
                     {
                         name: '01Isenor',
                         totalMeals: 3,
-                        mealCounts: { 'Pizza': 1, 'Burger': 2 },
+                        mealCounts: { Pizza: 1, Burger: 2 },
                         meals: [
-                            { name: 'Burger', Student: 'Jane Doe', Quantity: 2 },
+                            {
+                                name: 'Burger',
+                                Student: 'Jane Doe',
+                                Quantity: 2
+                            },
                             { name: 'Pizza', Student: 'John Doe', Quantity: 1 }
                         ]
                     }
                 ],
                 locations: {
-                    'Eaglewood': {
+                    Eaglewood: {
                         totalMeals: 3,
-                        mealCounts: { 'Pizza': 1, 'Burger': 2 },
+                        mealCounts: { Pizza: 1, Burger: 2 },
                         classes: [
                             {
                                 name: '01Isenor',
                                 room: '101',
                                 totalMeals: 3,
-                                mealCounts: { 'Pizza': 1, 'Burger': 2 },
+                                mealCounts: { Pizza: 1, Burger: 2 },
                                 meals: [
-                                    { name: 'Burger', Student: 'Jane Doe', Quantity: 2 },
-                                    { name: 'Pizza', Student: 'John Doe', Quantity: 1 }
+                                    {
+                                        name: 'Burger',
+                                        Student: 'Jane Doe',
+                                        Quantity: 2
+                                    },
+                                    {
+                                        name: 'Pizza',
+                                        Student: 'John Doe',
+                                        Quantity: 1
+                                    }
                                 ]
                             }
                         ]
@@ -99,7 +116,9 @@ describe('transformUserInputData', () => {
                 }
             }
         };
-        expect(transformUserInputData(userInputData, homeRoomDict)).toEqual(expectedData);
+        expect(transformUserInputData(userInputData, homeRoomDict)).toEqual(
+            expectedData
+        );
     });
 
     test('should transform user input data correctly without locations', () => {
@@ -110,14 +129,18 @@ describe('transformUserInputData', () => {
         const expectedData = {
             '2024-01-01': {
                 totalMeals: 3,
-                mealCounts: { 'Pizza': 1, 'Burger': 2 },
+                mealCounts: { Pizza: 1, Burger: 2 },
                 classes: [
                     {
                         name: '01Isenor',
                         totalMeals: 3,
-                        mealCounts: { 'Pizza': 1, 'Burger': 2 },
+                        mealCounts: { Pizza: 1, Burger: 2 },
                         meals: [
-                            { name: 'Burger', Student: 'Jane Doe', Quantity: 2 },
+                            {
+                                name: 'Burger',
+                                Student: 'Jane Doe',
+                                Quantity: 2
+                            },
                             { name: 'Pizza', Student: 'John Doe', Quantity: 1 }
                         ]
                     }
@@ -125,7 +148,9 @@ describe('transformUserInputData', () => {
                 locations: null
             }
         };
-        expect(transformUserInputData(userInputData, null)).toEqual(expectedData);
+        expect(transformUserInputData(userInputData, null)).toEqual(
+            expectedData
+        );
     });
 
     test('should transform user input data correctly with locations', () => {
@@ -139,31 +164,43 @@ describe('transformUserInputData', () => {
         const expectedData = {
             '2024-01-01': {
                 totalMeals: 3,
-                mealCounts: { 'Pizza': 1, 'Burger': 2 },
+                mealCounts: { Pizza: 1, Burger: 2 },
                 classes: [
                     {
                         name: '01Isenor',
                         totalMeals: 3,
-                        mealCounts: { 'Pizza': 1, 'Burger': 2 },
+                        mealCounts: { Pizza: 1, Burger: 2 },
                         meals: [
-                            { name: 'Burger', Student: 'Jane Doe', Quantity: 2 },
+                            {
+                                name: 'Burger',
+                                Student: 'Jane Doe',
+                                Quantity: 2
+                            },
                             { name: 'Pizza', Student: 'John Doe', Quantity: 1 }
                         ]
                     }
                 ],
                 locations: {
-                    'Eaglewood': {
+                    Eaglewood: {
                         totalMeals: 3,
-                        mealCounts: { 'Pizza': 1, 'Burger': 2 },
+                        mealCounts: { Pizza: 1, Burger: 2 },
                         classes: [
                             {
                                 name: '01Isenor',
                                 room: '101',
                                 totalMeals: 3,
-                                mealCounts: { 'Pizza': 1, 'Burger': 2 },
+                                mealCounts: { Pizza: 1, Burger: 2 },
                                 meals: [
-                                    { name: 'Burger', Student: 'Jane Doe', Quantity: 2 },
-                                    { name: 'Pizza', Student: 'John Doe', Quantity: 1 }
+                                    {
+                                        name: 'Burger',
+                                        Student: 'Jane Doe',
+                                        Quantity: 2
+                                    },
+                                    {
+                                        name: 'Pizza',
+                                        Student: 'John Doe',
+                                        Quantity: 1
+                                    }
                                 ]
                             }
                         ]
@@ -171,6 +208,8 @@ describe('transformUserInputData', () => {
                 }
             }
         };
-        expect(transformUserInputData(userInputData, homeRoomDict)).toEqual(expectedData);
+        expect(transformUserInputData(userInputData, homeRoomDict)).toEqual(
+            expectedData
+        );
     });
 });
