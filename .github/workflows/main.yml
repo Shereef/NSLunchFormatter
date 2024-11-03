@@ -43,7 +43,7 @@ jobs:
               run: echo "JAVA_HOME=/opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/21/x64" >> $GITHUB_ENV
 
             - name: SonarCloud Scan
-              uses: SonarSource/sonarcloud-github-action@v1
+              uses: SonarSource/sonarcloud-github-action@v3
               env:
                   SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
                   JAVA_HOME: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/21/x64
