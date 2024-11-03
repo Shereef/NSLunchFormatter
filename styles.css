@@ -3,6 +3,7 @@ body {
     background-color: #f4f4f4;
     margin: 0;
     padding: 0;
+    min-width: 256px;
 }
 
 .container {
@@ -12,6 +13,7 @@ body {
     background-color: #fff;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
+    min-width: 256px;
 }
 
 h1 {
@@ -129,6 +131,7 @@ footer {
     .container {
         margin: 20px;
         padding: 10px;
+        min-width: 256px;
     }
 
     .file-input label, .btn {
