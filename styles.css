@@ -80,7 +80,7 @@ h1 {
 
 .advanced-option textarea {
     width: 100%;
-    height: 200px;
+    height: 100px; /* moved from inline style */
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 4px;
@@ -129,6 +129,13 @@ footer p {
 
 .instructions p {
     margin: 10px 0;
+}
+
+.logo {
+    width: 150px;
+    height: auto;
+    display: block;
+    margin: 0 auto;
 }
 
 @media (width <= 768px) {

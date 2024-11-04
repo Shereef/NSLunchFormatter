@@ -27,10 +27,9 @@ SOFTWARE.
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>NSLunch Formatter</title>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
         <script src="script.js"></script>
-
+        <title>Nova Scotia Lunch Formatter</title>
         <link
             rel="stylesheet"
             href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
@@ -38,9 +37,25 @@ SOFTWARE.
         <link rel="stylesheet" href="styles.css" />
         <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.70/pdfmake.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.70/vfs_fonts.js"></script>
+        <link
+            rel="icon"
+            type="image/png"
+            href="favicon-96x96.png"
+            sizes="96x96"
+        />
+        <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+        <link rel="shortcut icon" href="favicon.ico" />
+        <link
+            rel="apple-touch-icon"
+            sizes="180x180"
+            href="/apple-touch-icon.png"
+        />
+        <meta name="apple-mobile-web-app-title" content="NS Lunch Formatter" />
+        <link rel="manifest" href="site.webmanifest" />
     </head>
     <body>
         <div class="container">
+            <img src="logo.png" alt="NS Lunch Formatter Logo" class="logo" />
             <h1>NS Lunch Formatter</h1>
             <p>
                 This page allows you to upload a CSV file containing student
@@ -70,7 +85,10 @@ SOFTWARE.
                 <p>
                     If you have issues, you can report them by adding issues to
                     this GitHub repo:
-                    <a href="https://github.com/Shereef/NSLunchFormatter/issues"
+                    <a
+                        href="https://github.com/Shereef/NSLunchFormatter/issues"
+                        target="_blank"
+                        rel="noopener"
                         >NSLunchFormatter</a
                     >.
                 </p>
@@ -86,15 +104,6 @@ SOFTWARE.
                 <label for="hideAdvancedOptions">Hide Advanced Options</label>
             </div>
             <h3 class="advanced-option">CSV Columns:</h3>
-            <textarea
-                class="advanced-option"
-                id="csvColumns"
-                style="height: 100px"
-            >
-Home Room Name
-Location
-Room Number</textarea
-            >
             <span class="advanced-option"
                 >Home room name must be the first column<br />Location must be
                 the second column<br />Room Number must be the third column<br />This
@@ -103,7 +112,7 @@ Room Number</textarea
             >
             <div class="advanced-option">
                 <h3>Home room information:</h3>
-                <textarea id="homeRoomInfo">
+                <textarea id="homeRoomInfo" title="Home room information">
 Home Room Name,Location,Room Number
 01Isenor,Eaglewood,101
 0Coughlin,Fort Sackville,4
@@ -136,11 +145,18 @@ PPEun,Fort Sackville,1</textarea
         <footer>
             <p>
                 Connect with me on
-                <a href="https://www.linkedin.com/in/shereef/" target="_blank"
+                <a
+                    href="https://www.linkedin.com/in/shereef/"
+                    target="_blank"
+                    rel="noopener"
                     >LinkedIn</a
                 >
             </p>
-            <p><a href="LICENSE.txt" target="_blank">MIT License</a></p>
+            <p>
+                <a href="LICENSE.txt" target="_blank" rel="noopener"
+                    >MIT License</a
+                >
+            </p>
         </footer>
     </body>
 </html>
