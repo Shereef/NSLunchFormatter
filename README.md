@@ -1,6 +1,7 @@
 # Nova Scotia Lunch Formatter
 
 [![CI/CD](https://github.com/Shereef/NSLunchFormatter/actions/workflows/main.yml/badge.svg)](https://github.com/Shereef/NSLunchFormatter/actions/workflows/main.yml)
+[![Known Vulnerabilities](https://snyk.io/test/github/Shereef/NSLunchFormatter/badge.svg)](https://snyk.io/test/github/Shereef/NSLunchFormatter)
 
 [![Quality gate](https://sonarcloud.io/api/project_badges/quality_gate?project=Shereef_md-txt)](https://sonarcloud.io/summary/new_code?id=Shereef_md-txt)
 
