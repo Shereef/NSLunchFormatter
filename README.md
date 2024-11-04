@@ -2,8 +2,12 @@
 
 [![CI/CD](https://github.com/Shereef/NSLunchFormatter/actions/workflows/main.yml/badge.svg)](https://github.com/Shereef/NSLunchFormatter/actions/workflows/main.yml)
 [![Known Vulnerabilities](https://snyk.io/test/github/Shereef/NSLunchFormatter/badge.svg)](https://snyk.io/test/github/Shereef/NSLunchFormatter)
-
-[![Quality gate](https://sonarcloud.io/api/project_badges/quality_gate?project=Shereef_md-txt)](https://sonarcloud.io/summary/new_code?id=Shereef_md-txt)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Shereef_NSLunchFormatter&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=Shereef_NSLunchFormatter)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Code Coverage](https://img.shields.io/codecov/c/github/Shereef/NSLunchFormatter)](https://codecov.io/gh/Shereef/NSLunchFormatter)
+[![Code Quality](https://img.shields.io/codeclimate/maintainability/Shereef/NSLunchFormatter)](https://codeclimate.com/github/Shereef/NSLunchFormatter)
+[![Contributors](https://img.shields.io/github/contributors/Shereef/NSLunchFormatter)](https://github.com/Shereef/NSLunchFormatter/graphs/contributors)
+[![Last Commit](https://img.shields.io/github/last-commit/Shereef/NSLunchFormatter)](https://github.com/Shereef/NSLunchFormatter/commits/main)
 
 This project helps schools convert CSV reports with student names and meals into
 a consolidated list by meals and classes. The tool can export the consolidated
