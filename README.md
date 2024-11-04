@@ -2,6 +2,8 @@
 
 <img src="logo.png" alt="NSLunch Formatter Logo" height="100px" width="100px">
 
+[![Quality gate](https://sonarcloud.io/api/project_badges/quality_gate?project=Shereef_md-txt)](https://sonarcloud.io/summary/new_code?id=Shereef_md-txt)
+
 This project helps schools convert CSV reports with student names and meals into
 a consolidated list by meals and classes. The tool can export the consolidated
 data to PDF format.
