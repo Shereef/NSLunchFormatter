@@ -20,12 +20,12 @@ If you encounter any issues or have suggestions for improvements, please submit 
 
 Please ensure that your code adheres to the project's coding standards and conventions. We use ESLint for JavaScript linting, Prettier for code formatting, and Stylelint for CSS linting. You can run the following commands to check and fix any linting or formatting issues:
 
-- **Lint JavaScript**: `npm run lint`
-- **Fix JavaScript Linting Issues**: `npm run lint:fix`
-- **Check Code Formatting**: `npm run prettier:check`
-- **Format Code**: `npm run format`
-- **Lint CSS**: `npm run stylelint`
-- **Fix CSS Linting Issues**: `npm run stylelint:fix`
+-   **Lint JavaScript**: `npm run lint`
+-   **Fix JavaScript Linting Issues**: `npm run lint:fix`
+-   **Check Code Formatting**: `npm run prettier:check`
+-   **Format Code**: `npm run format`
+-   **Lint CSS**: `npm run stylelint`
+-   **Fix CSS Linting Issues**: `npm run stylelint:fix`
 
 ## Code of Conduct
 
