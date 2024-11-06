@@ -82,5 +82,7 @@ jobs:
               run: npm run release
 
             - name: Push changes and tags
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
               run: |
                   git push --follow-tags origin main
