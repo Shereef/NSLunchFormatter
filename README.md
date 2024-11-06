@@ -83,6 +83,10 @@ Please note that this project is released with a [Contributor Code of Conduct](C
 
 All notable changes to this project will be documented in the [Changelog](CHANGELOG.md).
 
+### Release Management
+
+This project uses `standard-version` for versioning and changelog generation. To create a new release, run:
+
 ### Contact
 
 For any inquiries, please contact [Shereef Marzouk](https://www.linkedin.com/in/shereef/).

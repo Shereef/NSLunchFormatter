@@ -30,3 +30,7 @@ Please ensure that your code adheres to the project's coding standards and conve
 ## Code of Conduct
 
 Please note that this project is released with a [Contributor Code of Conduct](CODE_OF_CONDUCT.md). By participating in this project you agree to abide by its terms.
+
+## Release Management
+
+This project uses `standard-version` for versioning and changelog generation. To create a new release, run:
