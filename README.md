@@ -57,6 +57,10 @@ the information. The information never leaves your computer. This is open source
 and hosted on GitHub Pages publicly and can be verified that it's safe by any
 tech-savvy person. However, it doesn't support password-protected files.
 
+### Security Policy
+
+If you discover any security vulnerabilities, please refer to our [Security Policy](SECURITY.md) for instructions on how to report them. This helps ensure that any security issues are addressed promptly and responsibly.
+
 ### Issues
 
 If you have issues, you can report them by adding issues to this GitHub repo:
