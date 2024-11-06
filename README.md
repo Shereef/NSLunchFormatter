@@ -73,7 +73,15 @@ This project is licensed under the MIT License - see the
 
 ### Contributing
 
-Contributions are welcome! Please fork the repository and submit a pull request with your changes.
+Contributions are welcome! Please refer to our [Contributing Guidelines](CONTRIBUTING.md) for more information on how to contribute.
+
+### Code of Conduct
+
+Please note that this project is released with a [Contributor Code of Conduct](CODE_OF_CONDUCT.md). By participating in this project you agree to abide by its terms.
+
+### Changelog
+
+All notable changes to this project will be documented in the [Changelog](CHANGELOG.md).
 
 ### Contact
 
