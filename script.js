@@ -222,6 +222,75 @@ function addFooter(doc, pageNumber, formattedDate) {
     );
 }
 
+function addSummaryTable(doc, data, pageWidth) {
+    let y = 10;
+    doc.setFontSize(18);
+    doc.text('Summary Report', (pageWidth - doc.getTextWidth('Summary Report')) / 2, y);
+    y += 10;
+    doc.setFontSize(12);
+
+    Object.keys(data).forEach((date) => {
+        const dateData = data[date];
+        doc.setFontSize(14);
+        doc.text(`Date: ${date}`, 10, y);
+        y += 10;
+
+        if (dateData.locations) {
+            Object.keys(dateData.locations).forEach((location) => {
+                const locationData = dateData.locations[location];
+                doc.setFontSize(12);
+                doc.text(`Location: ${location}`, 20, y);
+                y += 10;
+
+                const homeRoomNames = locationData.classes.map(classData => classData.name);
+                const mealNames = [...new Set(locationData.classes.flatMap(classData => Object.keys(classData.mealCounts)))];
+
+                const tableHead = [['Home Room', ...mealNames]];
+                const tableBody = homeRoomNames.map(homeRoom => [
+                    homeRoom,
+                    ...mealNames.map(meal => {
+                        const classData = locationData.classes.find(classData => classData.name === homeRoom);
+                        return classData ? (classData.mealCounts[meal] || 0) : 0;
+                    })
+                ]);
+
+                doc.autoTable({
+                    startY: y,
+                    head: tableHead,
+                    body: tableBody,
+                    theme: 'grid',
+                    styles: { fontSize: 10 },
+                    margin: { left: 20 }
+                });
+                y = doc.autoTable.previous.finalY + 10;
+            });
+        } else {
+            const homeRoomNames = dateData.classes.map(classData => classData.name);
+            const mealNames = [...new Set(dateData.classes.flatMap(classData => Object.keys(classData.mealCounts)))];
+
+            const tableHead = [['Home Room', ...mealNames]];
+            const tableBody = homeRoomNames.map(homeRoom => [
+                homeRoom,
+                ...mealNames.map(meal => {
+                    const classData = dateData.classes.find(classData => classData.name === homeRoom);
+                    return classData ? (classData.mealCounts[meal] || 0) : 0;
+                })
+            ]);
+
+            doc.autoTable({
+                startY: y,
+                head: tableHead,
+                body: tableBody,
+                theme: 'grid',
+                styles: { fontSize: 10 },
+                margin: { left: 20 }
+            });
+            y = doc.autoTable.previous.finalY + 10;
+        }
+        y += 10;
+    });
+}
+
 function exportToPDF(data) {
     const { jsPDF } = window.jspdf; // Ensure jsPDF is correctly referenced
     const doc = new jsPDF();
@@ -254,7 +323,11 @@ function exportToPDF(data) {
         return mealColors[meal];
     }
 
-    let pageNumber = 0;
+    let pageNumber = 1;
+    addSummaryTable(doc, data, pageWidth);
+    doc.addPage();
+    pageNumber++;
+
     Object.keys(data).forEach((date) => {
         const [day, month, year] = date.split('-');
         const fullYear = year.length === 2 ? `20${year}` : year;
@@ -335,7 +408,9 @@ function exportToPDF(data) {
                     const locationDateText = `${locationTitle}    ${dateTitle}`;
                     doc.text(
                         locationDateText,
-                        (pageWidth - doc.getTextWidth(locationDateText)) / 2,
+                        (pageWidth -
+                            doc.getTextWidth(locationDateText)) /
+                            2,
                         y
                     );
                     y += 10;
@@ -345,7 +420,8 @@ function exportToPDF(data) {
                     }`;
                     doc.text(
                         classTitle,
-                        (pageWidth - doc.getTextWidth(classTitle)) / 2,
+                        (pageWidth - doc.getTextWidth(classTitle)) /
+                            2,
                         y
                     );
                     y += 10;
