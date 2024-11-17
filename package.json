@@ -1,6 +1,6 @@
 {
     "name": "ns-lunch-formatter",
-    "version": "1.0.4",
+    "version": "1.0.5",
     "description": "This project helps schools convert CSV reports with student names and meals into a consolidated list by meals and classes. The tool can export the consolidated data to PDF format.",
     "main": "index.html",
     "scripts": {
