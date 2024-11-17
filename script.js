@@ -641,21 +641,34 @@ function shouldDateBeChecked(date) {
     }
 }
 
+function showError(message) {
+    const errorContainer = document.getElementById('error-container');
+    errorContainer.textContent = message;
+    errorContainer.style.display = 'block';
+}
+
+function clearError() {
+    const errorContainer = document.getElementById('error-container');
+    errorContainer.style.display = 'none';
+    errorContainer.textContent = '';
+}
+
 document.addEventListener('DOMContentLoaded', function () {
     // Ensure jsPDF library is loaded
     if (!window.jspdf || !window.jspdf.jsPDF) {
         console.error('jsPDF library is not loaded.');
-        alert('jsPDF library is not loaded. Please include it in your HTML.');
+        showError('jsPDF library is not loaded. Please include it in your HTML.');
         return;
     }
 
     document
         .getElementById('processBtn')
         .addEventListener('click', function () {
+            clearError();
             const fileInput = document.getElementById('csvFile');
             if (fileInput.files.length === 0) {
                 console.error('Please select a CSV file.');
-                alert('Please select a CSV file first.');
+                showError('Please select a CSV file first.');
                 return;
             }
             const selectedDates = Array.from(
@@ -663,7 +676,7 @@ document.addEventListener('DOMContentLoaded', function () {
             ).map((input) => input.value);
             if (selectedDates.length === 0) {
                 console.error('Please select at least one date.');
-                alert('Please select at least one date.');
+                showError('Please select at least one date.');
                 return;
             }
             const homeRoomCsvReader = new FileReader();
@@ -696,6 +709,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
 
     document.getElementById('csvFile').addEventListener('change', function () {
+        clearError();
         const fileInputLabel = document.querySelector('.file-input label');
         if (this.files.length > 0) {
             fileInputLabel.classList.add('chosen');
