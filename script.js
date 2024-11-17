@@ -225,7 +225,11 @@ function addFooter(doc, pageNumber, formattedDate) {
 function addSummaryTable(doc, data, pageWidth) {
     let y = 10;
     doc.setFontSize(18);
-    doc.text('Summary Report', (pageWidth - doc.getTextWidth('Summary Report')) / 2, y);
+    doc.text(
+        'Summary Report',
+        (pageWidth - doc.getTextWidth('Summary Report')) / 2,
+        y
+    );
     y += 10;
     doc.setFontSize(12);
 
@@ -242,15 +246,25 @@ function addSummaryTable(doc, data, pageWidth) {
                 doc.text(`Location: ${location}`, 20, y);
                 y += 10;
 
-                const homeRoomNames = locationData.classes.map(classData => classData.name);
-                const mealNames = [...new Set(locationData.classes.flatMap(classData => Object.keys(classData.mealCounts)))];
+                const homeRoomNames = locationData.classes.map(
+                    (classData) => classData.name
+                );
+                const mealNames = [
+                    ...new Set(
+                        locationData.classes.flatMap((classData) =>
+                            Object.keys(classData.mealCounts)
+                        )
+                    )
+                ];
 
                 const tableHead = [['Home Room', ...mealNames]];
-                const tableBody = homeRoomNames.map(homeRoom => [
+                const tableBody = homeRoomNames.map((homeRoom) => [
                     homeRoom,
-                    ...mealNames.map(meal => {
-                        const classData = locationData.classes.find(classData => classData.name === homeRoom);
-                        return classData ? (classData.mealCounts[meal] || 0) : 0;
+                    ...mealNames.map((meal) => {
+                        const classData = locationData.classes.find(
+                            (classData) => classData.name === homeRoom
+                        );
+                        return classData ? classData.mealCounts[meal] || 0 : 0;
                     })
                 ]);
 
@@ -265,15 +279,25 @@ function addSummaryTable(doc, data, pageWidth) {
                 y = doc.autoTable.previous.finalY + 10;
             });
         } else {
-            const homeRoomNames = dateData.classes.map(classData => classData.name);
-            const mealNames = [...new Set(dateData.classes.flatMap(classData => Object.keys(classData.mealCounts)))];
+            const homeRoomNames = dateData.classes.map(
+                (classData) => classData.name
+            );
+            const mealNames = [
+                ...new Set(
+                    dateData.classes.flatMap((classData) =>
+                        Object.keys(classData.mealCounts)
+                    )
+                )
+            ];
 
             const tableHead = [['Home Room', ...mealNames]];
-            const tableBody = homeRoomNames.map(homeRoom => [
+            const tableBody = homeRoomNames.map((homeRoom) => [
                 homeRoom,
-                ...mealNames.map(meal => {
-                    const classData = dateData.classes.find(classData => classData.name === homeRoom);
-                    return classData ? (classData.mealCounts[meal] || 0) : 0;
+                ...mealNames.map((meal) => {
+                    const classData = dateData.classes.find(
+                        (classData) => classData.name === homeRoom
+                    );
+                    return classData ? classData.mealCounts[meal] || 0 : 0;
                 })
             ]);
 
@@ -291,197 +315,135 @@ function addSummaryTable(doc, data, pageWidth) {
     });
 }
 
-function exportToPDF(data, selectedDates) {
-    const { jsPDF } = window.jspdf; // Ensure jsPDF is correctly referenced
-    const doc = new jsPDF();
-    const pageWidth =
-        doc.internal.pageSize.width || doc.internal.pageSize.getWidth();
-    const pageHeight =
-        doc.internal.pageSize.height || doc.internal.pageSize.getHeight();
-    const atlanticTimeOptions = { timeZone: 'America/Halifax', hour12: false };
-    const printDate = new Date().toLocaleString('en-CA', atlanticTimeOptions).replace(/,/, '').replace(/:/g, '-');
-    const locationColors = {};
-    const mealColors = {};
-    let locationColorIndex = 0;
-    let mealColorIndex = 0;
-    const colors = ['#2E4053', '#1F618D', '#117A65'];
-
-    function getColorForLocation(location) {
-        if (!locationColors[location]) {
-            locationColors[location] =
-                colors[locationColorIndex % colors.length];
-            locationColorIndex++;
-        }
-        return locationColors[location];
+function getColorForLocation(location, locationColors, colors) {
+    if (!locationColors[location]) {
+        locationColors[location] =
+            colors[Object.keys(locationColors).length % colors.length];
     }
+    return locationColors[location];
+}
 
-    function getColorForMeal(meal) {
-        if (!mealColors[meal]) {
-            mealColors[meal] = colors[mealColorIndex % colors.length];
-            mealColorIndex++;
-        }
-        return mealColors[meal];
+function getColorForMeal(meal, mealColors, colors) {
+    if (!mealColors[meal]) {
+        mealColors[meal] =
+            colors[Object.keys(mealColors).length % colors.length];
     }
+    return mealColors[meal];
+}
 
-    let pageNumber = 1;
+function addSummaryPage(doc, data, pageWidth) {
     addSummaryTable(doc, data, pageWidth);
     doc.addPage();
-    pageNumber++;
+}
 
-    Object.keys(data).forEach((date) => {
-        const [day, month, year] = date.split('-');
-        const fullYear = year.length === 2 ? `20${year}` : year;
-        const monthIndex = new Date(`${month} 1`).getMonth();
-        const formattedDateStr = `${fullYear}-${String(monthIndex + 1).padStart(2, '0')}-${day}T00:00:00`;
-        let parsedDate = new Date(new Date(formattedDateStr).toLocaleString('en-CA', atlanticTimeOptions));
-        let formattedDate = parsedDate.toLocaleString('en-CA', { ...atlanticTimeOptions, year: 'numeric', month: '2-digit', day: '2-digit' }).split(',')[0];
-        if (isNaN(parsedDate)) {
-            console.error(`Invalid date: ${date}, using date as-is.`);
-            parsedDate = new Date(date);
-            formattedDate = date;
-        }
-        if (isNaN(parsedDate)) {
-            console.error(`Invalid date: ${date}`);
-            return;
-        }
-        pageNumber = 1;
-        doc.setFontSize(18);
-        const summaryTitle = 'NSLunch Report';
-        doc.text(
-            summaryTitle,
-            (pageWidth - doc.getTextWidth(summaryTitle)) / 2,
-            10
-        );
-        doc.setFontSize(14);
-        const generatedOnText = `Generated on: ${printDate}`;
-        doc.text(
-            generatedOnText,
-            (pageWidth - doc.getTextWidth(generatedOnText)) / 2,
-            20
-        );
-        let y = 30;
-        const dateData = data[date];
-        doc.setFontSize(16);
-        const dateTitle = `Date: ${formattedDate}`;
-        doc.text(dateTitle, (pageWidth - doc.getTextWidth(dateTitle)) / 2, y);
-        y += 10;
-        doc.setFontSize(14);
-        doc.text(`Total Meals for the School: ${dateData.totalMeals}`, 10, y);
-        y += 10;
+function addDatePage(
+    doc,
+    date,
+    data,
+    pageWidth,
+    pageHeight,
+    colors,
+    locationColors,
+    mealColors,
+    printDate
+) {
+    const atlanticTimeOptions = { timeZone: 'America/Halifax', hour12: false };
+    const [day, month, year] = date.split('-');
+    const fullYear = year.length === 2 ? `20${year}` : year;
+    const monthIndex = new Date(`${month} 1`).getMonth();
+    const formattedDateStr = `${fullYear}-${String(monthIndex + 1).padStart(2, '0')}-${day}T00:00:00`;
+    let parsedDate = new Date(
+        new Date(formattedDateStr).toLocaleString('en-CA', atlanticTimeOptions)
+    );
+    let formattedDate = parsedDate
+        .toLocaleString('en-CA', {
+            ...atlanticTimeOptions,
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit'
+        })
+        .split(',')[0];
+    if (isNaN(parsedDate)) {
+        console.error(`Invalid date: ${date}, using date as-is.`);
+        parsedDate = new Date(date);
+        formattedDate = date;
+    }
+    if (isNaN(parsedDate)) {
+        console.error(`Invalid date: ${date}`);
+        return;
+    }
+    let pageNumber = 1;
+    doc.setFontSize(18);
+    const summaryTitle = 'NSLunch Report';
+    doc.text(
+        summaryTitle,
+        (pageWidth - doc.getTextWidth(summaryTitle)) / 2,
+        10
+    );
+    doc.setFontSize(14);
+    const generatedOnText = `Generated on: ${printDate}`;
+    doc.text(
+        generatedOnText,
+        (pageWidth - doc.getTextWidth(generatedOnText)) / 2,
+        20
+    );
+    let y = 30;
+    const dateData = data[date];
+    doc.setFontSize(16);
+    const dateTitle = `Date: ${formattedDate}`;
+    doc.text(dateTitle, (pageWidth - doc.getTextWidth(dateTitle)) / 2, y);
+    y += 10;
+    doc.setFontSize(14);
+    doc.text(`Total Meals for the School: ${dateData.totalMeals}`, 10, y);
+    y += 10;
 
-        if (dateData.locations) {
-            Object.keys(dateData.locations).forEach((location) => {
-                const locationData = dateData.locations[location];
-                doc.setFontSize(14);
-                doc.setTextColor(getColorForLocation(location));
-                doc.text(`Location: ${location}`, 10, y);
-                y += 10;
-                doc.text(`Total Meals: ${locationData.totalMeals}`, 20, y);
-                y += 10;
-                Object.keys(locationData.mealCounts).forEach((meal) => {
-                    doc.setTextColor(getColorForMeal(meal));
-                    doc.text(
-                        `${meal}: ${locationData.mealCounts[meal]}`,
-                        30,
-                        y
-                    );
-                    y += 10;
-                });
+    if (dateData.locations) {
+        Object.keys(dateData.locations).forEach((location) => {
+            const locationData = dateData.locations[location];
+            doc.setFontSize(14);
+            doc.setTextColor(
+                getColorForLocation(location, locationColors, colors)
+            );
+            doc.text(`Location: ${location}`, 10, y);
+            y += 10;
+            doc.text(`Total Meals: ${locationData.totalMeals}`, 20, y);
+            y += 10;
+            Object.keys(locationData.mealCounts).forEach((meal) => {
+                doc.setTextColor(getColorForMeal(meal, mealColors, colors));
+                doc.text(`${meal}: ${locationData.mealCounts[meal]}`, 30, y);
                 y += 10;
             });
-        }
+            y += 10;
+        });
+    }
 
-        y += 10;
-        addFooter(doc, pageNumber, formattedDate);
-        doc.setPage(1);
+    y += 10;
+    addFooter(doc, pageNumber, formattedDate);
+    doc.setPage(1);
 
-        if (dateData.locations) {
-            Object.keys(dateData.locations).forEach((location) => {
-                const locationData = dateData.locations[location];
-                locationData.classes.forEach((classData) => {
+    if (dateData.locations) {
+        Object.keys(dateData.locations).forEach((location) => {
+            const locationData = dateData.locations[location];
+            locationData.classes.forEach((classData) => {
+                if (pageNumber > 1) {
                     doc.addPage();
                     pageNumber++;
                     y = 10;
-                    doc.setFontSize(16);
-                    doc.setTextColor(getColorForLocation(location));
-                    const locationTitle = `Location: ${location}`;
-                    const locationDateText = `${locationTitle}    ${dateTitle}`;
-                    doc.text(
-                        locationDateText,
-                        (pageWidth -
-                            doc.getTextWidth(locationDateText)) /
-                            2,
-                        y
-                    );
-                    y += 10;
-                    doc.setFontSize(16);
-                    const classTitle = `Class: ${classData.name}${
-                        classData.room ? ` (Room: ${classData.room})` : ''
-                    }`;
-                    doc.text(
-                        classTitle,
-                        (pageWidth - doc.getTextWidth(classTitle)) /
-                            2,
-                        y
-                    );
-                    y += 10;
-                    doc.setFontSize(14);
-                    doc.text(`Total Meals: ${classData.totalMeals}`, 10, y);
-                    y += 10;
-                    const mealGroups = classData.meals.reduce((acc, meal) => {
-                        if (!acc[meal.name]) acc[meal.name] = [];
-                        acc[meal.name].push(meal);
-                        return acc;
-                    }, {});
-                    Object.keys(mealGroups).forEach((mealName) => {
-                        const meals = mealGroups[mealName];
-                        doc.setTextColor(getColorForMeal(mealName));
-                        doc.text(`${mealName} x ${meals.length}`, 15, y);
-                        y += 10;
-                        meals.forEach((meal) => {
-                            if (y + 10 > pageHeight) {
-                                doc.addPage();
-                                pageNumber++;
-                                y = 10;
-                                doc.setFontSize(16);
-                                doc.setTextColor(getColorForLocation(location));
-                                doc.text(
-                                    locationDateText,
-                                    (pageWidth -
-                                        doc.getTextWidth(locationDateText)) /
-                                        2,
-                                    y
-                                );
-                                y += 10;
-                                doc.setFontSize(16);
-                                doc.text(
-                                    classTitle,
-                                    (pageWidth - doc.getTextWidth(classTitle)) /
-                                        2,
-                                    y
-                                );
-                                y += 10;
-                            }
-                            doc.setFontSize(12);
-                            doc.text(
-                                `${meal.Student}: ${meal.Quantity}`,
-                                20,
-                                y
-                            );
-                            y += 10;
-                        });
-                        y += 5;
-                    });
-                    addFooter(doc, pageNumber, formattedDate);
-                });
-            });
-        } else {
-            dateData.classes.forEach((classData) => {
-                doc.addPage();
-                pageNumber++;
-                y = 10;
+                }
                 doc.setFontSize(16);
-                const classTitle = `Class: ${classData.name}`;
+                doc.setTextColor(
+                    getColorForLocation(location, locationColors, colors)
+                );
+                const locationTitle = `Location: ${location}`;
+                const locationDateText = `${locationTitle}    ${dateTitle}`;
+                doc.text(
+                    locationDateText,
+                    (pageWidth - doc.getTextWidth(locationDateText)) / 2,
+                    y
+                );
+                y += 10;
+                doc.setFontSize(16);
+                const classTitle = `Class: ${classData.name}${classData.room ? ` (Room: ${classData.room})` : ''}`;
                 doc.text(
                     classTitle,
                     (pageWidth - doc.getTextWidth(classTitle)) / 2,
@@ -489,13 +451,6 @@ function exportToPDF(data, selectedDates) {
                 );
                 y += 10;
                 doc.setFontSize(14);
-                const dateTitle = `Date: ${formattedDate}`;
-                doc.text(
-                    dateTitle,
-                    (pageWidth - doc.getTextWidth(dateTitle)) / 2,
-                    y
-                );
-                y += 10;
                 doc.text(`Total Meals: ${classData.totalMeals}`, 10, y);
                 y += 10;
                 const mealGroups = classData.meals.reduce((acc, meal) => {
@@ -505,7 +460,9 @@ function exportToPDF(data, selectedDates) {
                 }, {});
                 Object.keys(mealGroups).forEach((mealName) => {
                     const meals = mealGroups[mealName];
-                    doc.setTextColor(getColorForMeal(mealName));
+                    doc.setTextColor(
+                        getColorForMeal(mealName, mealColors, colors)
+                    );
                     doc.text(`${mealName} x ${meals.length}`, 15, y);
                     y += 10;
                     meals.forEach((meal) => {
@@ -514,16 +471,25 @@ function exportToPDF(data, selectedDates) {
                             pageNumber++;
                             y = 10;
                             doc.setFontSize(16);
+                            doc.setTextColor(
+                                getColorForLocation(
+                                    location,
+                                    locationColors,
+                                    colors
+                                )
+                            );
                             doc.text(
-                                classTitle,
-                                (pageWidth - doc.getTextWidth(classTitle)) / 2,
+                                locationDateText,
+                                (pageWidth -
+                                    doc.getTextWidth(locationDateText)) /
+                                    2,
                                 y
                             );
                             y += 10;
-                            doc.setFontSize(14);
+                            doc.setFontSize(16);
                             doc.text(
-                                dateTitle,
-                                (pageWidth - doc.getTextWidth(dateTitle)) / 2,
+                                classTitle,
+                                (pageWidth - doc.getTextWidth(classTitle)) / 2,
                                 y
                             );
                             y += 10;
@@ -536,12 +502,110 @@ function exportToPDF(data, selectedDates) {
                 });
                 addFooter(doc, pageNumber, formattedDate);
             });
-        }
-        doc.addPage();
-        pageNumber++;
+        });
+    } else {
+        dateData.classes.forEach((classData) => {
+            if (pageNumber > 1) {
+                doc.addPage();
+                pageNumber++;
+                y = 10;
+            }
+            doc.setFontSize(16);
+            const classTitle = `Class: ${classData.name}`;
+            doc.text(
+                classTitle,
+                (pageWidth - doc.getTextWidth(classTitle)) / 2,
+                y
+            );
+            y += 10;
+            doc.setFontSize(14);
+            const dateTitle = `Date: ${formattedDate}`;
+            doc.text(
+                dateTitle,
+                (pageWidth - doc.getTextWidth(dateTitle)) / 2,
+                y
+            );
+            y += 10;
+            doc.text(`Total Meals: ${classData.totalMeals}`, 10, y);
+            y += 10;
+            const mealGroups = classData.meals.reduce((acc, meal) => {
+                if (!acc[meal.name]) acc[meal.name] = [];
+                acc[meal.name].push(meal);
+                return acc;
+            }, {});
+            Object.keys(mealGroups).forEach((mealName) => {
+                const meals = mealGroups[mealName];
+                doc.setTextColor(getColorForMeal(mealName, mealColors, colors));
+                doc.text(`${mealName} x ${meals.length}`, 15, y);
+                y += 10;
+                meals.forEach((meal) => {
+                    if (y + 10 > pageHeight) {
+                        doc.addPage();
+                        pageNumber++;
+                        y = 10;
+                        doc.setFontSize(16);
+                        doc.text(
+                            classTitle,
+                            (pageWidth - doc.getTextWidth(classTitle)) / 2,
+                            y
+                        );
+                        y += 10;
+                        doc.setFontSize(14);
+                        doc.text(
+                            dateTitle,
+                            (pageWidth - doc.getTextWidth(dateTitle)) / 2,
+                            y
+                        );
+                        y += 10;
+                    }
+                    doc.setFontSize(12);
+                    doc.text(`${meal.Student}: ${meal.Quantity}`, 20, y);
+                    y += 10;
+                });
+                y += 5;
+            });
+            addFooter(doc, pageNumber, formattedDate);
+        });
+    }
+    doc.addPage();
+}
+
+function exportToPDF(data, selectedDates) {
+    const { jsPDF } = window.jspdf; // Ensure jsPDF is correctly referenced
+    const doc = new jsPDF();
+    const pageWidth =
+        doc.internal.pageSize.width || doc.internal.pageSize.getWidth();
+    const pageHeight =
+        doc.internal.pageSize.height || doc.internal.pageSize.getHeight();
+    const atlanticTimeOptions = { timeZone: 'America/Halifax', hour12: false };
+    const printDate = new Date()
+        .toLocaleString('en-CA', atlanticTimeOptions)
+        .replace(/,/, '')
+        .replace(/:/g, '-');
+    const locationColors = {};
+    const mealColors = {};
+    const colors = ['#2E4053', '#1F618D', '#117A65'];
+
+    addSummaryPage(doc, data, pageWidth);
+
+    Object.keys(data).forEach((date) => {
+        addDatePage(
+            doc,
+            date,
+            data,
+            pageWidth,
+            pageHeight,
+            colors,
+            locationColors,
+            mealColors,
+            printDate
+        );
     });
 
-    const dateRange = selectedDates.length === 1 ? selectedDates[0] : `${selectedDates[0]}-${selectedDates[selectedDates.length - 1]}`;
+    const dateRange =
+        selectedDates.length === 1
+            ? selectedDates[0]
+            : `${selectedDates[0]}-${selectedDates[selectedDates.length - 1]}`;
     const fileName = `NSLunch Report for ${dateRange} Generated on ${printDate}.pdf`;
     doc.save(fileName);
 }
@@ -549,7 +613,7 @@ function exportToPDF(data, selectedDates) {
 function listDates(dates) {
     const dateContainer = document.getElementById('date-container');
     dateContainer.innerHTML = '';
-    dates.forEach(date => {
+    dates.forEach((date) => {
         const dateCheckbox = document.createElement('input');
         dateCheckbox.type = 'checkbox';
         dateCheckbox.id = date;
@@ -569,7 +633,8 @@ function shouldDateBeChecked(date) {
     const today = new Date();
     const [day, month, year] = date.split('-');
     const dateObj = new Date(`${year}-${month}-${day}`);
-    if (today.getDay() === 1) { // Monday
+    if (today.getDay() === 1) {
+        // Monday
         return dateObj >= today;
     } else {
         return dateObj.toDateString() === today.toDateString();
@@ -593,7 +658,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 alert('Please select a CSV file first.');
                 return;
             }
-            const selectedDates = Array.from(document.querySelectorAll('input[name="dates"]:checked')).map(input => input.value);
+            const selectedDates = Array.from(
+                document.querySelectorAll('input[name="dates"]:checked')
+            ).map((input) => input.value);
             const homeRoomCsvReader = new FileReader();
             homeRoomCsvReader.onload = function (csvEventHomeRoom) {
                 const csvTextHomeRoom = csvEventHomeRoom.target.result;
@@ -606,9 +673,16 @@ document.addEventListener('DOMContentLoaded', function () {
                     const userInputData = csvToArray(csvTextUserInput);
                     userInputData.shift();
                     userInputData.shift();
-                    const filteredData = userInputData.filter(row => selectedDates.includes(row[0]));
-                    const sortByLocation = filteredData.some(row => homeRoomDict[row[2]]);
-                    const transformedData = transformUserInputData(filteredData, sortByLocation ? homeRoomDict : null);
+                    const filteredData = userInputData.filter((row) =>
+                        selectedDates.includes(row[0])
+                    );
+                    const sortByLocation = filteredData.some(
+                        (row) => homeRoomDict[row[2]]
+                    );
+                    const transformedData = transformUserInputData(
+                        filteredData,
+                        sortByLocation ? homeRoomDict : null
+                    );
                     exportToPDF(transformedData, selectedDates);
                 };
                 userInputCsvReader.readAsText(fileInput.files[0]);
@@ -627,7 +701,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 const userInputData = csvToArray(csvTextUserInput);
                 userInputData.shift();
                 userInputData.shift();
-                const dates = [...new Set(userInputData.map(row => row[0]))];
+                const dates = [...new Set(userInputData.map((row) => row[0]))];
                 listDates(dates);
             };
             userInputCsvReader.readAsText(this.files[0]);
