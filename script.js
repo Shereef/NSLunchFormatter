@@ -225,7 +225,11 @@ function addFooter(doc, pageNumber, formattedDate) {
 function addSummaryTable(doc, data, pageWidth, pageHeight) {
     let y = 10;
     doc.setFontSize(18);
-    doc.text('Summary Report', (pageWidth - doc.getTextWidth('Summary Report')) / 2, y);
+    doc.text(
+        'Summary Report',
+        (pageWidth - doc.getTextWidth('Summary Report')) / 2,
+        y
+    );
     y += 10;
     doc.setFontSize(12);
 
@@ -246,19 +250,29 @@ function addSummaryTable(doc, data, pageWidth, pageHeight) {
                 const locationData = dateData.locations[location];
                 doc.setFontSize(12);
 
-                const homeRoomNames = locationData.classes.map(classData => classData.name);
-                const mealNames = [...new Set(locationData.classes.flatMap(classData => Object.keys(classData.mealCounts)))];
+                const homeRoomNames = locationData.classes.map(
+                    (classData) => classData.name
+                );
+                const mealNames = [
+                    ...new Set(
+                        locationData.classes.flatMap((classData) =>
+                            Object.keys(classData.mealCounts)
+                        )
+                    )
+                ];
 
                 const tableHead = [['Home Room', ...mealNames]];
-                const tableBody = homeRoomNames.map(homeRoom => [
+                const tableBody = homeRoomNames.map((homeRoom) => [
                     homeRoom,
-                    ...mealNames.map(meal => {
-                        const classData = locationData.classes.find(classData => classData.name === homeRoom);
-                        return classData ? (classData.mealCounts[meal] || 0) : 0;
+                    ...mealNames.map((meal) => {
+                        const classData = locationData.classes.find(
+                            (classData) => classData.name === homeRoom
+                        );
+                        return classData ? classData.mealCounts[meal] || 0 : 0;
                     })
                 ]);
 
-                if (y + 30 + (tableBody.length * 10) > pageHeight) {
+                if (y + 30 + tableBody.length * 10 > pageHeight) {
                     doc.addPage();
                     y = 10;
                     doc.text(dateText, 10, y);
@@ -283,19 +297,29 @@ function addSummaryTable(doc, data, pageWidth, pageHeight) {
                 y = doc.autoTable.previous.finalY + 10;
             });
         } else {
-            const homeRoomNames = dateData.classes.map(classData => classData.name);
-            const mealNames = [...new Set(dateData.classes.flatMap(classData => Object.keys(classData.mealCounts)))];
+            const homeRoomNames = dateData.classes.map(
+                (classData) => classData.name
+            );
+            const mealNames = [
+                ...new Set(
+                    dateData.classes.flatMap((classData) =>
+                        Object.keys(classData.mealCounts)
+                    )
+                )
+            ];
 
             const tableHead = [['Home Room', ...mealNames]];
-            const tableBody = homeRoomNames.map(homeRoom => [
+            const tableBody = homeRoomNames.map((homeRoom) => [
                 homeRoom,
-                ...mealNames.map(meal => {
-                    const classData = dateData.classes.find(classData => classData.name === homeRoom);
-                    return classData ? (classData.mealCounts[meal] || 0) : 0;
+                ...mealNames.map((meal) => {
+                    const classData = dateData.classes.find(
+                        (classData) => classData.name === homeRoom
+                    );
+                    return classData ? classData.mealCounts[meal] || 0 : 0;
                 })
             ]);
 
-            if (y + 30 + (tableBody.length * 10) > pageHeight) {
+            if (y + 30 + tableBody.length * 10 > pageHeight) {
                 doc.addPage();
                 y = 10;
                 doc.text(dateText, 10, y);
@@ -327,7 +351,10 @@ function exportToPDF(data, selectedDates) {
     const pageHeight =
         doc.internal.pageSize.height || doc.internal.pageSize.getHeight();
     const atlanticTimeOptions = { timeZone: 'America/Halifax', hour12: false };
-    const printDate = new Date().toLocaleString('en-CA', atlanticTimeOptions).replace(/,/, '').replace(/:/g, '-');
+    const printDate = new Date()
+        .toLocaleString('en-CA', atlanticTimeOptions)
+        .replace(/,/, '')
+        .replace(/:/g, '-');
     const locationColors = {};
     const mealColors = {};
     let locationColorIndex = 0;
@@ -361,8 +388,20 @@ function exportToPDF(data, selectedDates) {
         const fullYear = year.length === 2 ? `20${year}` : year;
         const monthIndex = new Date(`${month} 1`).getMonth();
         const formattedDateStr = `${fullYear}-${String(monthIndex + 1).padStart(2, '0')}-${day}T00:00:00`;
-        let parsedDate = new Date(new Date(formattedDateStr).toLocaleString('en-CA', atlanticTimeOptions));
-        let formattedDate = parsedDate.toLocaleString('en-CA', { ...atlanticTimeOptions, year: 'numeric', month: '2-digit', day: '2-digit' }).split(',')[0];
+        let parsedDate = new Date(
+            new Date(formattedDateStr).toLocaleString(
+                'en-CA',
+                atlanticTimeOptions
+            )
+        );
+        let formattedDate = parsedDate
+            .toLocaleString('en-CA', {
+                ...atlanticTimeOptions,
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit'
+            })
+            .split(',')[0];
         if (isNaN(parsedDate)) {
             console.error(`Invalid date: ${date}, using date as-is.`);
             parsedDate = new Date(date);
@@ -436,9 +475,7 @@ function exportToPDF(data, selectedDates) {
                     const locationDateText = `${locationTitle}    ${dateTitle}`;
                     doc.text(
                         locationDateText,
-                        (pageWidth -
-                            doc.getTextWidth(locationDateText)) /
-                            2,
+                        (pageWidth - doc.getTextWidth(locationDateText)) / 2,
                         y
                     );
                     y += 10;
@@ -448,8 +485,7 @@ function exportToPDF(data, selectedDates) {
                     }`;
                     doc.text(
                         classTitle,
-                        (pageWidth - doc.getTextWidth(classTitle)) /
-                            2,
+                        (pageWidth - doc.getTextWidth(classTitle)) / 2,
                         y
                     );
                     y += 10;
@@ -464,7 +500,11 @@ function exportToPDF(data, selectedDates) {
                     Object.keys(mealGroups).forEach((mealName) => {
                         const meals = mealGroups[mealName];
                         doc.setTextColor(getColorForMeal(mealName));
-                        doc.text(`${mealName} x ${meals.reduce((sum, meal) => sum + meal.Quantity, 0)}`, 15, y);
+                        doc.text(
+                            `${mealName} x ${meals.reduce((sum, meal) => sum + meal.Quantity, 0)}`,
+                            15,
+                            y
+                        );
                         y += 10;
                         meals.forEach((meal) => {
                             if (y + 10 > pageHeight) {
@@ -534,7 +574,11 @@ function exportToPDF(data, selectedDates) {
                 Object.keys(mealGroups).forEach((mealName) => {
                     const meals = mealGroups[mealName];
                     doc.setTextColor(getColorForMeal(mealName));
-                    doc.text(`${mealName} x ${meals.reduce((sum, meal) => sum + meal.Quantity, 0)}`, 15, y);
+                    doc.text(
+                        `${mealName} x ${meals.reduce((sum, meal) => sum + meal.Quantity, 0)}`,
+                        15,
+                        y
+                    );
                     y += 10;
                     meals.forEach((meal) => {
                         if (y + 10 > pageHeight) {
@@ -569,7 +613,10 @@ function exportToPDF(data, selectedDates) {
         pageNumber++;
     });
 
-    const dateRange = selectedDates.length === 1 ? selectedDates[0] : `${selectedDates[0]}-${selectedDates[selectedDates.length - 1]}`;
+    const dateRange =
+        selectedDates.length === 1
+            ? selectedDates[0]
+            : `${selectedDates[0]}-${selectedDates[selectedDates.length - 1]}`;
     const fileName = `NSLunch Report for ${dateRange} Generated on ${printDate}.pdf`;
     doc.save(fileName);
 }
@@ -577,7 +624,7 @@ function exportToPDF(data, selectedDates) {
 function listDates(dates) {
     const dateContainer = document.getElementById('date-container');
     dateContainer.innerHTML = '';
-    dates.forEach(date => {
+    dates.forEach((date) => {
         const dateCheckbox = document.createElement('input');
         dateCheckbox.type = 'checkbox';
         dateCheckbox.id = date;
@@ -599,7 +646,9 @@ function listDates(dates) {
         selectedDates = Array.from(
             document.querySelectorAll('input[name="dates"]')
         ).map((input) => input.value);
-        document.querySelectorAll('input[name="dates"]').forEach(input => input.checked = true);
+        document
+            .querySelectorAll('input[name="dates"]')
+            .forEach((input) => (input.checked = true));
     }
 }
 
@@ -607,7 +656,8 @@ function shouldDateBeChecked(date) {
     const today = new Date();
     const [day, month, year] = date.split('-');
     const dateObj = new Date(`${year}-${month}-${day}`);
-    if (today.getDay() === 1) { // Monday
+    if (today.getDay() === 1) {
+        // Monday
         return dateObj >= today;
     } else {
         return dateObj.toDateString() === today.toDateString();
@@ -630,7 +680,9 @@ document.addEventListener('DOMContentLoaded', function () {
     // Ensure jsPDF library is loaded
     if (!window.jspdf || !window.jspdf.jsPDF) {
         console.error('jsPDF library is not loaded.');
-        showError('jsPDF library is not loaded. Please include it in your HTML.');
+        showError(
+            'jsPDF library is not loaded. Please include it in your HTML.'
+        );
         return;
     }
 
@@ -664,9 +716,16 @@ document.addEventListener('DOMContentLoaded', function () {
                     const userInputData = csvToArray(csvTextUserInput);
                     userInputData.shift();
                     userInputData.shift();
-                    const filteredData = userInputData.filter(row => selectedDates.includes(row[0]));
-                    const sortByLocation = filteredData.some(row => homeRoomDict[row[2]]);
-                    const transformedData = transformUserInputData(filteredData, sortByLocation ? homeRoomDict : null);
+                    const filteredData = userInputData.filter((row) =>
+                        selectedDates.includes(row[0])
+                    );
+                    const sortByLocation = filteredData.some(
+                        (row) => homeRoomDict[row[2]]
+                    );
+                    const transformedData = transformUserInputData(
+                        filteredData,
+                        sortByLocation ? homeRoomDict : null
+                    );
                     exportToPDF(transformedData, selectedDates);
                 };
                 userInputCsvReader.readAsText(fileInput.files[0]);
@@ -686,7 +745,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 const userInputData = csvToArray(csvTextUserInput);
                 userInputData.shift();
                 userInputData.shift();
-                const dates = [...new Set(userInputData.map(row => row[0]))];
+                const dates = [...new Set(userInputData.map((row) => row[0]))];
                 listDates(dates);
             };
             userInputCsvReader.readAsText(this.files[0]);
