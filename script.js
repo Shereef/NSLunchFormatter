@@ -343,11 +343,60 @@ function addSummaryTable(doc, data, pageWidth, pageHeight) {
     });
 }
 
-function addClassDataToPDF(doc, classData, location, dateTitle, pageWidth, y, getColorForLocation, getColorForMeal, addFooter, pageNumber, formattedDate) {
-    doc.setFontSize(16);
-    doc.setTextColor(getColorForLocation(location));
+function addClassDataToPDF(
+    doc,
+    classData,
+    location,
+    dateTitle,
+    pageWidth,
+    y,
+    getColorForLocation,
+    getColorForMeal,
+    addFooter,
+    pageNumber,
+    formattedDate
+) {
     const locationTitle = `Location: ${location} - `;
     const locationDateText = `${location?.length > 0 ? locationTitle : ''}Meals ${dateTitle}`;
+    const classTitle = `Class: ${classData.name}${classData.room ? ` (Room: ${classData.room})` : ''}`;
+    const totalMealsText = `Total Meals: ${classData.totalMeals}`;
+    const mealGroups = classData.meals.reduce((acc, meal) => {
+        if (!acc[meal.name]) acc[meal.name] = [];
+        acc[meal.name].push(meal);
+        return acc;
+    }, {});
+
+    // Calculate the height needed
+    let requiredHeight = 10 + 10 + 10 + 10; // Initial heights for titles and total meals
+    if (location?.length > 0) {
+        requiredHeight += 10; // Additional height for location title
+    }
+    Object.keys(mealGroups).forEach((mealName) => {
+        const meals = mealGroups[mealName];
+        requiredHeight += 10; // Height for meal name
+        const studentNames = meals.map((meal) => meal.Student).join(', ');
+        const lines = doc.splitTextToSize(studentNames, pageWidth - 40);
+        requiredHeight += lines.length * 10; // Height for student names
+    });
+    requiredHeight += 5; // Additional padding
+
+    const pageHeight = doc.internal.pageSize.height;
+    const currentPageNumber = doc.internal.getNumberOfPages();
+    console.log('Current Page Number:', currentPageNumber);
+    console.log('pageNumber:', pageNumber);
+    // Check if the content fits on the current page
+    if (y + requiredHeight >= pageHeight) {
+        doc.addPage();
+        pageNumber++;
+        y = 10;
+        console.log('New Page Number:', pageNumber, classTitle, dateTitle);
+    } else {
+        console.log('Content fits on the current page', classTitle, dateTitle);
+    }
+
+    // Add content to the document
+    doc.setFontSize(16);
+    doc.setTextColor(getColorForLocation(location));
     doc.text(
         locationDateText,
         (pageWidth - doc.getTextWidth(locationDateText)) / 2,
@@ -355,43 +404,23 @@ function addClassDataToPDF(doc, classData, location, dateTitle, pageWidth, y, ge
     );
     y += 10;
     doc.setFontSize(16);
-    const classTitle = `Class: ${classData.name}${
-        classData.room ? ` (Room: ${classData.room})` : ''
-    }`;
-    doc.text(
-        classTitle,
-        (pageWidth - doc.getTextWidth(classTitle)) / 2,
-        y
-    );
+    doc.text(classTitle, (pageWidth - doc.getTextWidth(classTitle)) / 2, y);
     y += 10;
     doc.setFontSize(14);
-    doc.text(`Total Meals: ${classData.totalMeals}`, 10, y);
+    doc.text(totalMealsText, 10, y);
     y += 10;
-    const mealGroups = classData.meals.reduce((acc, meal) => {
-        if (!acc[meal.name]) acc[meal.name] = [];
-        acc[meal.name].push(meal);
-        return acc;
-    }, {});
     Object.keys(mealGroups).forEach((mealName) => {
         const meals = mealGroups[mealName];
         doc.setTextColor(getColorForMeal(mealName));
         doc.text(
-            `${mealName} x ${meals.reduce(
-                (sum, meal) => sum + meal.Quantity,
-                0
-            )}`,
+            `${mealName} x ${meals.reduce((sum, meal) => sum + meal.Quantity, 0)}`,
             15,
             y
         );
         y += 10;
-        const studentNames = meals
-            .map((meal) => meal.Student)
-            .join(', ');
+        const studentNames = meals.map((meal) => meal.Student).join(', ');
         doc.setFontSize(12);
-        const lines = doc.splitTextToSize(
-            studentNames,
-            pageWidth - 40
-        );
+        const lines = doc.splitTextToSize(studentNames, pageWidth - 40);
         lines.forEach((line) => {
             doc.text(line, 20, y);
             y += 10;
@@ -519,24 +548,41 @@ function exportToPDF(data, selectedDates) {
 
         y += 10;
         addFooter(doc, pageNumber, formattedDate);
-        doc.setPage(1);
 
         if (dateData.locations) {
             Object.keys(dateData.locations).forEach((location) => {
                 const locationData = dateData.locations[location];
                 locationData.classes.forEach((classData) => {
-                    doc.addPage();
-                    pageNumber++;
-                    y = 10;
-                    ({ pageNumber, y } = addClassDataToPDF(doc, classData, location, dateTitle, pageWidth, y, getColorForLocation, getColorForMeal, addFooter, pageNumber, formattedDate));
+                    ({ pageNumber, y } = addClassDataToPDF(
+                        doc,
+                        classData,
+                        location,
+                        dateTitle,
+                        pageWidth,
+                        y,
+                        getColorForLocation,
+                        getColorForMeal,
+                        addFooter,
+                        pageNumber,
+                        formattedDate
+                    ));
                 });
             });
         } else {
             dateData.classes.forEach((classData) => {
-                doc.addPage();
-                pageNumber++;
-                y = 10;
-                ({ pageNumber, y } = addClassDataToPDF(doc, classData, '', dateTitle, pageWidth, y, getColorForLocation, getColorForMeal, addFooter, pageNumber, formattedDate));
+                ({ pageNumber, y } = addClassDataToPDF(
+                    doc,
+                    classData,
+                    '',
+                    dateTitle,
+                    pageWidth,
+                    y,
+                    getColorForLocation,
+                    getColorForMeal,
+                    addFooter,
+                    pageNumber,
+                    formattedDate
+                ));
             });
         }
 
