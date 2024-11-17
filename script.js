@@ -464,7 +464,7 @@ function exportToPDF(data, selectedDates) {
                     Object.keys(mealGroups).forEach((mealName) => {
                         const meals = mealGroups[mealName];
                         doc.setTextColor(getColorForMeal(mealName));
-                        doc.text(`${mealName} x ${meals.length}`, 15, y);
+                        doc.text(`${mealName} x ${meals.reduce((sum, meal) => sum + meal.Quantity, 0)}`, 15, y);
                         y += 10;
                         meals.forEach((meal) => {
                             if (y + 10 > pageHeight) {
@@ -534,7 +534,7 @@ function exportToPDF(data, selectedDates) {
                 Object.keys(mealGroups).forEach((mealName) => {
                     const meals = mealGroups[mealName];
                     doc.setTextColor(getColorForMeal(mealName));
-                    doc.text(`${mealName} x ${meals.length}`, 15, y);
+                    doc.text(`${mealName} x ${meals.reduce((sum, meal) => sum + meal.Quantity, 0)}`, 15, y);
                     y += 10;
                     meals.forEach((meal) => {
                         if (y + 10 > pageHeight) {
