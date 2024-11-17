@@ -138,6 +138,30 @@ footer p {
     margin: 0 auto;
 }
 
+#date-container {
+    margin: 20px 0;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #f9f9f9;
+}
+
+#date-container input[type="checkbox"] {
+    margin-right: 10px;
+}
+
+#date-container label {
+    display: inline-block;
+    margin-right: 20px;
+    font-size: 14px;
+    color: #333;
+}
+
+#date-container label:hover {
+    color: #007bff;
+    cursor: pointer;
+}
+
 @media (width <= 768px) {
     .container {
         margin: 20px;

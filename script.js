@@ -548,6 +548,36 @@ function exportToPDF(data) {
     doc.save(fileName);
 }
 
+function listDates(dates) {
+    const dateContainer = document.getElementById('date-container');
+    dateContainer.innerHTML = '';
+    dates.forEach(date => {
+        const dateCheckbox = document.createElement('input');
+        dateCheckbox.type = 'checkbox';
+        dateCheckbox.id = date;
+        dateCheckbox.name = 'dates';
+        dateCheckbox.value = date;
+        dateCheckbox.checked = shouldDateBeChecked(date);
+        const dateLabel = document.createElement('label');
+        dateLabel.htmlFor = date;
+        dateLabel.textContent = date;
+        dateContainer.appendChild(dateCheckbox);
+        dateContainer.appendChild(dateLabel);
+        dateContainer.appendChild(document.createElement('br'));
+    });
+}
+
+function shouldDateBeChecked(date) {
+    const today = new Date();
+    const [day, month, year] = date.split('-');
+    const dateObj = new Date(`${year}-${month}-${day}`);
+    if (today.getDay() === 1) { // Monday
+        return dateObj >= today;
+    } else {
+        return dateObj.toDateString() === today.toDateString();
+    }
+}
+
 document.addEventListener('DOMContentLoaded', function () {
     // Ensure jsPDF library is loaded
     if (!window.jspdf || !window.jspdf.jsPDF) {
@@ -565,6 +595,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 alert('Please select a CSV file first.');
                 return;
             }
+            const selectedDates = Array.from(document.querySelectorAll('input[name="dates"]:checked')).map(input => input.value);
             const homeRoomCsvReader = new FileReader();
             homeRoomCsvReader.onload = function (csvEventHomeRoom) {
                 const csvTextHomeRoom = csvEventHomeRoom.target.result;
@@ -577,13 +608,9 @@ document.addEventListener('DOMContentLoaded', function () {
                     const userInputData = csvToArray(csvTextUserInput);
                     userInputData.shift();
                     userInputData.shift();
-                    const sortByLocation = userInputData.some(
-                        (row) => homeRoomDict[row[2]]
-                    );
-                    const transformedData = transformUserInputData(
-                        userInputData,
-                        sortByLocation ? homeRoomDict : null
-                    );
+                    const filteredData = userInputData.filter(row => selectedDates.includes(row[0]));
+                    const sortByLocation = filteredData.some(row => homeRoomDict[row[2]]);
+                    const transformedData = transformUserInputData(filteredData, sortByLocation ? homeRoomDict : null);
                     exportToPDF(transformedData);
                 };
                 userInputCsvReader.readAsText(fileInput.files[0]);
@@ -596,6 +623,16 @@ document.addEventListener('DOMContentLoaded', function () {
         if (this.files.length > 0) {
             fileInputLabel.classList.add('chosen');
             fileInputLabel.textContent = `File Chosen: ${this.files[0].name}`;
+            const userInputCsvReader = new FileReader();
+            userInputCsvReader.onload = function (csvEventUserInput) {
+                const csvTextUserInput = csvEventUserInput.target.result;
+                const userInputData = csvToArray(csvTextUserInput);
+                userInputData.shift();
+                userInputData.shift();
+                const dates = [...new Set(userInputData.map(row => row[0]))];
+                listDates(dates);
+            };
+            userInputCsvReader.readAsText(this.files[0]);
         } else {
             fileInputLabel.classList.remove('chosen');
             fileInputLabel.innerHTML =
