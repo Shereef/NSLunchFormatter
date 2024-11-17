@@ -661,6 +661,11 @@ document.addEventListener('DOMContentLoaded', function () {
             const selectedDates = Array.from(
                 document.querySelectorAll('input[name="dates"]:checked')
             ).map((input) => input.value);
+            if (selectedDates.length === 0) {
+                console.error('Please select at least one date.');
+                alert('Please select at least one date.');
+                return;
+            }
             const homeRoomCsvReader = new FileReader();
             homeRoomCsvReader.onload = function (csvEventHomeRoom) {
                 const csvTextHomeRoom = csvEventHomeRoom.target.result;
