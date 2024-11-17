@@ -291,7 +291,7 @@ function addSummaryTable(doc, data, pageWidth) {
     });
 }
 
-function exportToPDF(data) {
+function exportToPDF(data, selectedDates) {
     const { jsPDF } = window.jspdf; // Ensure jsPDF is correctly referenced
     const doc = new jsPDF();
     const pageWidth =
@@ -346,7 +346,7 @@ function exportToPDF(data) {
         }
         pageNumber = 1;
         doc.setFontSize(18);
-        const summaryTitle = 'NSLunch Report Summary';
+        const summaryTitle = 'NSLunch Report';
         doc.text(
             summaryTitle,
             (pageWidth - doc.getTextWidth(summaryTitle)) / 2,
@@ -540,11 +540,9 @@ function exportToPDF(data) {
         doc.addPage();
         pageNumber++;
     });
-    const fileName = `NSLunch_Report_${new Date()
-        .toISOString()
-        .replace(/T/, '_')
-        .replace(/:/g, '-')
-        .replace(/\..+/, '')}.pdf`;
+
+    const dateRange = selectedDates.length === 1 ? selectedDates[0] : `${selectedDates[0]}-${selectedDates[selectedDates.length - 1]}`;
+    const fileName = `NSLunch Report for ${dateRange} Generated on ${printDate}.pdf`;
     doc.save(fileName);
 }
 
@@ -611,7 +609,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     const filteredData = userInputData.filter(row => selectedDates.includes(row[0]));
                     const sortByLocation = filteredData.some(row => homeRoomDict[row[2]]);
                     const transformedData = transformUserInputData(filteredData, sortByLocation ? homeRoomDict : null);
-                    exportToPDF(transformedData);
+                    exportToPDF(transformedData, selectedDates);
                 };
                 userInputCsvReader.readAsText(fileInput.files[0]);
             };
