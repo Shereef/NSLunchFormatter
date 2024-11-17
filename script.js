@@ -229,10 +229,8 @@ function exportToPDF(data) {
         doc.internal.pageSize.width || doc.internal.pageSize.getWidth();
     const pageHeight =
         doc.internal.pageSize.height || doc.internal.pageSize.getHeight();
-    const printDate = new Date()
-        .toISOString()
-        .replace(/T/, ' ')
-        .replace(/\..+/, '');
+    const atlanticTimeOptions = { timeZone: 'America/Halifax', hour12: false };
+    const printDate = new Date().toLocaleString('en-CA', atlanticTimeOptions).replace(/,/, '').replace(/:/g, '-');
     const locationColors = {};
     const mealColors = {};
     let locationColorIndex = 0;
@@ -258,8 +256,22 @@ function exportToPDF(data) {
 
     let pageNumber = 0;
     Object.keys(data).forEach((date) => {
+        const [day, month, year] = date.split('-');
+        const fullYear = year.length === 2 ? `20${year}` : year;
+        const monthIndex = new Date(`${month} 1`).getMonth();
+        const formattedDateStr = `${fullYear}-${String(monthIndex + 1).padStart(2, '0')}-${day}T00:00:00`;
+        let parsedDate = new Date(new Date(formattedDateStr).toLocaleString('en-CA', atlanticTimeOptions));
+        let formattedDate = parsedDate.toLocaleString('en-CA', { ...atlanticTimeOptions, year: 'numeric', month: '2-digit', day: '2-digit' }).split(',')[0];
+        if (isNaN(parsedDate)) {
+            console.error(`Invalid date: ${date}, using date as-is.`);
+            parsedDate = new Date(date);
+            formattedDate = date;
+        }
+        if (isNaN(parsedDate)) {
+            console.error(`Invalid date: ${date}`);
+            return;
+        }
         pageNumber = 1;
-        const formattedDate = new Date(date).toISOString().split('T')[0];
         doc.setFontSize(18);
         const summaryTitle = 'NSLunch Report Summary';
         doc.text(
