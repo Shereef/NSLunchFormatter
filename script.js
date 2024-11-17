@@ -563,6 +563,16 @@ function listDates(dates) {
         dateContainer.appendChild(dateLabel);
         dateContainer.appendChild(document.createElement('br'));
     });
+    let selectedDates = Array.from(
+        document.querySelectorAll('input[name="dates"]:checked')
+    ).map((input) => input.value);
+    if (selectedDates.length === 0) {
+        console.warn('No dates selected, selecting all dates.');
+        selectedDates = Array.from(
+            document.querySelectorAll('input[name="dates"]')
+        ).map((input) => input.value);
+        document.querySelectorAll('input[name="dates"]').forEach(input => input.checked = true);
+    }
 }
 
 function shouldDateBeChecked(date) {
