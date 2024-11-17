@@ -655,6 +655,22 @@ function clearError() {
     errorContainer.textContent = '';
 }
 
+function validateCSVData(csvData) {
+    if (!csvData || csvData.length === 0) {
+        throw new Error('CSV data is empty or invalid.');
+    }
+    return true;
+}
+
+function parseCSVFile(file, callback) {
+    const reader = new FileReader();
+    reader.onload = function (event) {
+        const csvData = csvToArray(event.target.result);
+        callback(csvData);
+    };
+    reader.readAsText(file);
+}
+
 document.addEventListener('DOMContentLoaded', function () {
     // Ensure jsPDF library is loaded
     if (!window.jspdf || !window.jspdf.jsPDF) {
@@ -683,16 +699,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 showError('Please select at least one date.');
                 return;
             }
-            const homeRoomCsvReader = new FileReader();
-            homeRoomCsvReader.onload = function (csvEventHomeRoom) {
-                const csvTextHomeRoom = csvEventHomeRoom.target.result;
-                const homeRoomData = csvToArray(csvTextHomeRoom);
+            parseCSVFile(new Blob([getHomeRoomInfo()]), function (homeRoomData) {
                 homeRoomData.shift();
                 const homeRoomDict = convertHomeRoomDataToDict(homeRoomData);
-                const userInputCsvReader = new FileReader();
-                userInputCsvReader.onload = function (csvEventUserInput) {
-                    const csvTextUserInput = csvEventUserInput.target.result;
-                    const userInputData = csvToArray(csvTextUserInput);
+                parseCSVFile(fileInput.files[0], function (userInputData) {
                     userInputData.shift();
                     userInputData.shift();
                     const filteredData = userInputData.filter((row) =>
@@ -706,10 +716,8 @@ document.addEventListener('DOMContentLoaded', function () {
                         sortByLocation ? homeRoomDict : null
                     );
                     exportToPDF(transformedData, selectedDates);
-                };
-                userInputCsvReader.readAsText(fileInput.files[0]);
-            };
-            homeRoomCsvReader.readAsText(new Blob([getHomeRoomInfo()]));
+                });
+            });
         });
 
     document.getElementById('csvFile').addEventListener('change', function () {
@@ -750,6 +758,8 @@ if (typeof module !== 'undefined' && module.exports) {
         exportToPDF,
         hideAdvancedOptionsCheckedChange,
         getHomeRoomInfo,
-        addFooter
+        addFooter,
+        validateCSVData,
+        parseCSVFile
     };
 }
