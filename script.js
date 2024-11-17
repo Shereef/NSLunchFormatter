@@ -501,53 +501,35 @@ function exportToPDF(data, selectedDates) {
                         const meals = mealGroups[mealName];
                         doc.setTextColor(getColorForMeal(mealName));
                         doc.text(
-                            `${mealName} x ${meals.reduce((sum, meal) => sum + meal.Quantity, 0)}`,
+                            `${mealName} x ${meals.reduce(
+                                (sum, meal) => sum + meal.Quantity,
+                                0
+                            )}`,
                             15,
                             y
                         );
                         y += 10;
-                        meals.forEach((meal) => {
-                            if (y + 10 > pageHeight) {
-                                doc.addPage();
-                                pageNumber++;
-                                y = 10;
-                                doc.setFontSize(16);
-                                doc.setTextColor(getColorForLocation(location));
-                                doc.text(
-                                    locationDateText,
-                                    (pageWidth -
-                                        doc.getTextWidth(locationDateText)) /
-                                        2,
-                                    y
-                                );
-                                y += 10;
-                                doc.setFontSize(16);
-                                doc.text(
-                                    classTitle,
-                                    (pageWidth - doc.getTextWidth(classTitle)) /
-                                        2,
-                                    y
-                                );
-                                y += 10;
-                            }
-                            doc.setFontSize(12);
-                            doc.text(
-                                `${meal.Student}: ${meal.Quantity}`,
-                                20,
-                                y
-                            );
+                        const studentNames = meals.map(
+                            (meal) => meal.Student
+                        ).join(', ');
+                        doc.setFontSize(12);
+                        const lines = doc.splitTextToSize(studentNames, pageWidth - 40);
+                        lines.forEach((line) => {
+                            doc.text(line, 20, y);
                             y += 10;
                         });
-                        y += 5;
                     });
+                    y += 5;
                     addFooter(doc, pageNumber, formattedDate);
                 });
             });
         } else {
             dateData.classes.forEach((classData) => {
-                doc.addPage();
-                pageNumber++;
-                y = 10;
+                if (y + 60 > pageHeight) {
+                    doc.addPage();
+                    pageNumber++;
+                    y = 10;
+                }
                 doc.setFontSize(16);
                 const classTitle = `Class: ${classData.name}`;
                 doc.text(
@@ -575,37 +557,25 @@ function exportToPDF(data, selectedDates) {
                     const meals = mealGroups[mealName];
                     doc.setTextColor(getColorForMeal(mealName));
                     doc.text(
-                        `${mealName} x ${meals.reduce((sum, meal) => sum + meal.Quantity, 0)}`,
+                        `${mealName} x ${meals.reduce(
+                            (sum, meal) => sum + meal.Quantity,
+                            0
+                        )}`,
                         15,
                         y
                     );
                     y += 10;
-                    meals.forEach((meal) => {
-                        if (y + 10 > pageHeight) {
-                            doc.addPage();
-                            pageNumber++;
-                            y = 10;
-                            doc.setFontSize(16);
-                            doc.text(
-                                classTitle,
-                                (pageWidth - doc.getTextWidth(classTitle)) / 2,
-                                y
-                            );
-                            y += 10;
-                            doc.setFontSize(14);
-                            doc.text(
-                                dateTitle,
-                                (pageWidth - doc.getTextWidth(dateTitle)) / 2,
-                                y
-                            );
-                            y += 10;
-                        }
-                        doc.setFontSize(12);
-                        doc.text(`${meal.Student}: ${meal.Quantity}`, 20, y);
+                    const studentNames = meals.map(
+                        (meal) => meal.Student
+                    ).join(', ');
+                    doc.setFontSize(12);
+                    const lines = doc.splitTextToSize(studentNames, pageWidth - 40);
+                    lines.forEach((line) => {
+                        doc.text(line, 20, y);
                         y += 10;
                     });
-                    y += 5;
                 });
+                y += 5;
                 addFooter(doc, pageNumber, formattedDate);
             });
         }
