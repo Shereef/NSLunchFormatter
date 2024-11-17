@@ -222,7 +222,7 @@ function addFooter(doc, pageNumber, formattedDate) {
     );
 }
 
-function addSummaryTable(doc, data, pageWidth) {
+function addSummaryTable(doc, data, pageWidth, pageHeight) {
     let y = 10;
     doc.setFontSize(18);
     doc.text('Summary Report', (pageWidth - doc.getTextWidth('Summary Report')) / 2, y);
@@ -232,15 +232,19 @@ function addSummaryTable(doc, data, pageWidth) {
     Object.keys(data).forEach((date) => {
         const dateData = data[date];
         doc.setFontSize(14);
-        doc.text(`Date: ${date}`, 10, y);
-        y += 10;
+        const dateText = `Date: ${date}`;
+        const dateTextHeight = 10; // Approximate height of the text
+
+        // Check if the date text and table will fit on the current page
+        if (y + dateTextHeight + 30 > pageHeight) {
+            doc.addPage();
+            y = 10;
+        }
 
         if (dateData.locations) {
             Object.keys(dateData.locations).forEach((location) => {
                 const locationData = dateData.locations[location];
                 doc.setFontSize(12);
-                doc.text(`Location: ${location}`, 20, y);
-                y += 10;
 
                 const homeRoomNames = locationData.classes.map(classData => classData.name);
                 const mealNames = [...new Set(locationData.classes.flatMap(classData => Object.keys(classData.mealCounts)))];
@@ -253,6 +257,20 @@ function addSummaryTable(doc, data, pageWidth) {
                         return classData ? (classData.mealCounts[meal] || 0) : 0;
                     })
                 ]);
+
+                if (y + 30 + (tableBody.length * 10) > pageHeight) {
+                    doc.addPage();
+                    y = 10;
+                    doc.text(dateText, 10, y);
+                    y += dateTextHeight;
+                    doc.text(`Location: ${location}`, 20, y);
+                    y += 10;
+                } else {
+                    doc.text(dateText, 10, y);
+                    y += dateTextHeight;
+                    doc.text(`Location: ${location}`, 20, y);
+                    y += 10;
+                }
 
                 doc.autoTable({
                     startY: y,
@@ -276,6 +294,16 @@ function addSummaryTable(doc, data, pageWidth) {
                     return classData ? (classData.mealCounts[meal] || 0) : 0;
                 })
             ]);
+
+            if (y + 30 + (tableBody.length * 10) > pageHeight) {
+                doc.addPage();
+                y = 10;
+                doc.text(dateText, 10, y);
+                y += dateTextHeight;
+            } else {
+                doc.text(dateText, 10, y);
+                y += dateTextHeight;
+            }
 
             doc.autoTable({
                 startY: y,
@@ -324,7 +352,7 @@ function exportToPDF(data, selectedDates) {
     }
 
     let pageNumber = 1;
-    addSummaryTable(doc, data, pageWidth);
+    addSummaryTable(doc, data, pageWidth, pageHeight);
     doc.addPage();
     pageNumber++;
 
