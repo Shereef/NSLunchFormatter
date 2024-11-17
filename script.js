@@ -699,25 +699,29 @@ document.addEventListener('DOMContentLoaded', function () {
                 showError('Please select at least one date.');
                 return;
             }
-            parseCSVFile(new Blob([getHomeRoomInfo()]), function (homeRoomData) {
-                homeRoomData.shift();
-                const homeRoomDict = convertHomeRoomDataToDict(homeRoomData);
-                parseCSVFile(fileInput.files[0], function (userInputData) {
-                    userInputData.shift();
-                    userInputData.shift();
-                    const filteredData = userInputData.filter((row) =>
-                        selectedDates.includes(row[0])
-                    );
-                    const sortByLocation = filteredData.some(
-                        (row) => homeRoomDict[row[2]]
-                    );
-                    const transformedData = transformUserInputData(
-                        filteredData,
-                        sortByLocation ? homeRoomDict : null
-                    );
-                    exportToPDF(transformedData, selectedDates);
-                });
-            });
+            parseCSVFile(
+                new Blob([getHomeRoomInfo()]),
+                function (homeRoomData) {
+                    homeRoomData.shift();
+                    const homeRoomDict =
+                        convertHomeRoomDataToDict(homeRoomData);
+                    parseCSVFile(fileInput.files[0], function (userInputData) {
+                        userInputData.shift();
+                        userInputData.shift();
+                        const filteredData = userInputData.filter((row) =>
+                            selectedDates.includes(row[0])
+                        );
+                        const sortByLocation = filteredData.some(
+                            (row) => homeRoomDict[row[2]]
+                        );
+                        const transformedData = transformUserInputData(
+                            filteredData,
+                            sortByLocation ? homeRoomDict : null
+                        );
+                        exportToPDF(transformedData, selectedDates);
+                    });
+                }
+            );
         });
 
     document.getElementById('csvFile').addEventListener('change', function () {

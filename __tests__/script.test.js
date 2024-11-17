@@ -403,17 +403,26 @@ describe('addFooter', () => {
 
 describe('validateCSVData', () => {
     test('should throw an error for empty CSV data', () => {
-        expect(() => validateCSVData([])).toThrow('CSV data is empty or invalid.');
+        expect(() => validateCSVData([])).toThrow(
+            'CSV data is empty or invalid.'
+        );
     });
 
     test('should return true for valid CSV data', () => {
-        expect(validateCSVData([['name', 'age'], ['John', '30']])).toBe(true);
+        expect(
+            validateCSVData([
+                ['name', 'age'],
+                ['John', '30']
+            ])
+        ).toBe(true);
     });
 });
 
 describe('parseCSVFile', () => {
     test('should parse CSV file and call callback with data', (done) => {
-        const file = new Blob(['name,age\nJohn,30\nJane,25'], { type: 'text/csv' });
+        const file = new Blob(['name,age\nJohn,30\nJane,25'], {
+            type: 'text/csv'
+        });
         const callback = jest.fn((data) => {
             expect(data).toEqual([
                 ['name', 'age'],
