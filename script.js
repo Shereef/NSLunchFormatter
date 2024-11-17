@@ -237,7 +237,7 @@ function addSummaryTable(doc, data, pageWidth, pageHeight) {
         const dateData = data[date];
         doc.setFontSize(14);
         const dateText = `Date: ${date}`;
-        const dateTextHeight = 10; // Approximate height of the text
+        const dateTextHeight = doc.getTextDimensions(dateText).h; // Approximate height of the text
 
         // Check if the date text and table will fit on the current page
         if (y + dateTextHeight + 30 > pageHeight) {
@@ -341,6 +341,64 @@ function addSummaryTable(doc, data, pageWidth, pageHeight) {
         }
         y += 10;
     });
+}
+
+function addClassDataToPDF(doc, classData, location, dateTitle, pageWidth, y, getColorForLocation, getColorForMeal, addFooter, pageNumber, formattedDate) {
+    doc.setFontSize(16);
+    doc.setTextColor(getColorForLocation(location));
+    const locationTitle = `Location: ${location} - `;
+    const locationDateText = `${location?.length > 0 ? locationTitle : ''}Meals ${dateTitle}`;
+    doc.text(
+        locationDateText,
+        (pageWidth - doc.getTextWidth(locationDateText)) / 2,
+        y
+    );
+    y += 10;
+    doc.setFontSize(16);
+    const classTitle = `Class: ${classData.name}${
+        classData.room ? ` (Room: ${classData.room})` : ''
+    }`;
+    doc.text(
+        classTitle,
+        (pageWidth - doc.getTextWidth(classTitle)) / 2,
+        y
+    );
+    y += 10;
+    doc.setFontSize(14);
+    doc.text(`Total Meals: ${classData.totalMeals}`, 10, y);
+    y += 10;
+    const mealGroups = classData.meals.reduce((acc, meal) => {
+        if (!acc[meal.name]) acc[meal.name] = [];
+        acc[meal.name].push(meal);
+        return acc;
+    }, {});
+    Object.keys(mealGroups).forEach((mealName) => {
+        const meals = mealGroups[mealName];
+        doc.setTextColor(getColorForMeal(mealName));
+        doc.text(
+            `${mealName} x ${meals.reduce(
+                (sum, meal) => sum + meal.Quantity,
+                0
+            )}`,
+            15,
+            y
+        );
+        y += 10;
+        const studentNames = meals
+            .map((meal) => meal.Student)
+            .join(', ');
+        doc.setFontSize(12);
+        const lines = doc.splitTextToSize(
+            studentNames,
+            pageWidth - 40
+        );
+        lines.forEach((line) => {
+            doc.text(line, 20, y);
+            y += 10;
+        });
+    });
+    y += 5;
+    addFooter(doc, pageNumber, formattedDate);
 }
 
 function exportToPDF(data, selectedDates) {
@@ -469,114 +527,15 @@ function exportToPDF(data, selectedDates) {
                     doc.addPage();
                     pageNumber++;
                     y = 10;
-                    doc.setFontSize(16);
-                    doc.setTextColor(getColorForLocation(location));
-                    const locationTitle = `Location: ${location}`;
-                    const locationDateText = `${locationTitle}    ${dateTitle}`;
-                    doc.text(
-                        locationDateText,
-                        (pageWidth - doc.getTextWidth(locationDateText)) / 2,
-                        y
-                    );
-                    y += 10;
-                    doc.setFontSize(16);
-                    const classTitle = `Class: ${classData.name}${
-                        classData.room ? ` (Room: ${classData.room})` : ''
-                    }`;
-                    doc.text(
-                        classTitle,
-                        (pageWidth - doc.getTextWidth(classTitle)) / 2,
-                        y
-                    );
-                    y += 10;
-                    doc.setFontSize(14);
-                    doc.text(`Total Meals: ${classData.totalMeals}`, 10, y);
-                    y += 10;
-                    const mealGroups = classData.meals.reduce((acc, meal) => {
-                        if (!acc[meal.name]) acc[meal.name] = [];
-                        acc[meal.name].push(meal);
-                        return acc;
-                    }, {});
-                    Object.keys(mealGroups).forEach((mealName) => {
-                        const meals = mealGroups[mealName];
-                        doc.setTextColor(getColorForMeal(mealName));
-                        doc.text(
-                            `${mealName} x ${meals.reduce(
-                                (sum, meal) => sum + meal.Quantity,
-                                0
-                            )}`,
-                            15,
-                            y
-                        );
-                        y += 10;
-                        const studentNames = meals.map(
-                            (meal) => meal.Student
-                        ).join(', ');
-                        doc.setFontSize(12);
-                        const lines = doc.splitTextToSize(studentNames, pageWidth - 40);
-                        lines.forEach((line) => {
-                            doc.text(line, 20, y);
-                            y += 10;
-                        });
-                    });
-                    y += 5;
-                    addFooter(doc, pageNumber, formattedDate);
+                    addClassDataToPDF(doc, classData, location, dateTitle, pageWidth, y, getColorForLocation, getColorForMeal, addFooter, pageNumber, formattedDate);
                 });
             });
         } else {
             dateData.classes.forEach((classData) => {
-                if (y + 60 > pageHeight) {
-                    doc.addPage();
-                    pageNumber++;
-                    y = 10;
-                }
-                doc.setFontSize(16);
-                const classTitle = `Class: ${classData.name}`;
-                doc.text(
-                    classTitle,
-                    (pageWidth - doc.getTextWidth(classTitle)) / 2,
-                    y
-                );
-                y += 10;
-                doc.setFontSize(14);
-                const dateTitle = `Date: ${formattedDate}`;
-                doc.text(
-                    dateTitle,
-                    (pageWidth - doc.getTextWidth(dateTitle)) / 2,
-                    y
-                );
-                y += 10;
-                doc.text(`Total Meals: ${classData.totalMeals}`, 10, y);
-                y += 10;
-                const mealGroups = classData.meals.reduce((acc, meal) => {
-                    if (!acc[meal.name]) acc[meal.name] = [];
-                    acc[meal.name].push(meal);
-                    return acc;
-                }, {});
-                Object.keys(mealGroups).forEach((mealName) => {
-                    const meals = mealGroups[mealName];
-                    doc.setTextColor(getColorForMeal(mealName));
-                    doc.text(
-                        `${mealName} x ${meals.reduce(
-                            (sum, meal) => sum + meal.Quantity,
-                            0
-                        )}`,
-                        15,
-                        y
-                    );
-                    y += 10;
-                    const studentNames = meals.map(
-                        (meal) => meal.Student
-                    ).join(', ');
-                    doc.setFontSize(12);
-                    const lines = doc.splitTextToSize(studentNames, pageWidth - 40);
-                    lines.forEach((line) => {
-                        doc.text(line, 20, y);
-                        y += 10;
-                    });
-                });
-                y += 5;
-                addFooter(doc, pageNumber, formattedDate);
+                doc.addPage();
+                pageNumber++;
+                y = 10;
+                addClassDataToPDF(doc, classData, '', dateTitle, pageWidth, y, getColorForLocation, getColorForMeal, addFooter, pageNumber, formattedDate);
             });
         }
         doc.addPage();
