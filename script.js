@@ -399,6 +399,7 @@ function addClassDataToPDF(doc, classData, location, dateTitle, pageWidth, y, ge
     });
     y += 5;
     addFooter(doc, pageNumber, formattedDate);
+    return { pageNumber, y };
 }
 
 function exportToPDF(data, selectedDates) {
@@ -441,7 +442,7 @@ function exportToPDF(data, selectedDates) {
     doc.addPage();
     pageNumber++;
 
-    Object.keys(data).forEach((date) => {
+    Object.keys(data).forEach((date, dateIndex, dateArray) => {
         const [day, month, year] = date.split('-');
         const fullYear = year.length === 2 ? `20${year}` : year;
         const monthIndex = new Date(`${month} 1`).getMonth();
@@ -527,7 +528,7 @@ function exportToPDF(data, selectedDates) {
                     doc.addPage();
                     pageNumber++;
                     y = 10;
-                    addClassDataToPDF(doc, classData, location, dateTitle, pageWidth, y, getColorForLocation, getColorForMeal, addFooter, pageNumber, formattedDate);
+                    ({ pageNumber, y } = addClassDataToPDF(doc, classData, location, dateTitle, pageWidth, y, getColorForLocation, getColorForMeal, addFooter, pageNumber, formattedDate));
                 });
             });
         } else {
@@ -535,11 +536,14 @@ function exportToPDF(data, selectedDates) {
                 doc.addPage();
                 pageNumber++;
                 y = 10;
-                addClassDataToPDF(doc, classData, '', dateTitle, pageWidth, y, getColorForLocation, getColorForMeal, addFooter, pageNumber, formattedDate);
+                ({ pageNumber, y } = addClassDataToPDF(doc, classData, '', dateTitle, pageWidth, y, getColorForLocation, getColorForMeal, addFooter, pageNumber, formattedDate));
             });
         }
-        doc.addPage();
-        pageNumber++;
+
+        if (dateIndex < dateArray.length - 1) {
+            doc.addPage();
+            pageNumber++;
+        }
     });
 
     const dateRange =
